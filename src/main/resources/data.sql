@@ -1,8 +1,8 @@
 INSERT INTO `person` (`name`, cpf, birthDate) VALUES 
     ('Ana Holanda', 99999999999, '2002-07-13'), 
     ('Leandro Assunção', 88888888888, '2003-04-25'),
-    ('Joãozinho', 99999999999, '2012-07-13'),
-    ('Pedrinho', 88888888888, '2013-04-25'),
+    ('Joãozinho', 77777777777, '2012-07-13'),
+    ('Pedrinho', 66666666666, '2013-04-25'),
     ('Josenildo', 11111111111, '2012-04-25');
 
 INSERT INTO guardian (email, `password`, personId) VALUES 
@@ -12,18 +12,22 @@ INSERT INTO guardian (email, `password`, personId) VALUES
 INSERT INTO family_group (`name`) VALUES
     ('Família Sampaio'),
     ('Família Oliveira'),
-    ('Família Bolevar');
+    ('Família Boulevar');
 
 INSERT INTO `dependent` (personId, familyGroupId) VALUES 
     (3, 3),
     (4, 3),
     (5, 2);
 
-INSERT INTO `guard` (daysOfWeek, guardianRole, dependentId, guardianId) 
-    VALUES ('SUNDAY,MONDAY', 'MOTHER', 3, 1),
-     ('SUNDAY,MONDAY', 'FATHER', 4, 2),
-     ('SUNDAY,MONDAY', 'MOTHER', 5, 2),
-     ('SUNDAY,MONDAY', 'FATHER', 4, 2);
+INSERT INTO `guardian_in_family_group` (guardianId, familyGroupId) VALUES 
+    (1, 3),
+    (2, 3),
+    (2, 2);
+
+INSERT INTO `guard` (daysOfWeek, guardianRole, dependentId, guardianId) VALUES 
+    ('SUNDAY,MONDAY', 'MOTHER', 3, 1),
+    ('SUNDAY,MONDAY', 'MOTHER', 5, 2),
+    ('SUNDAY,MONDAY', 'FATHER', 4, 2);
 
 INSERT INTO `guard` (guardianRole, dependentId, guardianId) VALUES 
     ('MOTHER', 3, 2);

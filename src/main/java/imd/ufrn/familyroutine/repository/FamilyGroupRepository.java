@@ -8,7 +8,7 @@ import imd.ufrn.familyroutine.model.Dependent;
 
 import imd.ufrn.familyroutine.model.FamilyGroup;
 
-public interface FamilyGroupRepository{
+public interface FamilyGroupRepository {
 
   List<FamilyGroup> findAll();
 
@@ -20,7 +20,7 @@ public interface FamilyGroupRepository{
 
   void deleteAll();
 
-  Optional<List<Dependent>> findDependentsByFamilyGroupId(Long familyGroupId);
+  List<Dependent> findDependentsByFamilyGroupId(Long familyGroupId);
 
   Optional<FamilyGroup> findByDependentId(Long dependentId);
 

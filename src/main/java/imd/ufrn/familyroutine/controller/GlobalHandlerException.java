@@ -11,9 +11,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import imd.ufrn.familyroutine.model.RestResponse;
 import imd.ufrn.familyroutine.service.exception.ActivityIntervalException;
+import imd.ufrn.familyroutine.service.exception.EmailAlreadyInUseException;
 import imd.ufrn.familyroutine.service.exception.EntityNotFoundException;
+import imd.ufrn.familyroutine.service.exception.GroupActivityException;
+import imd.ufrn.familyroutine.service.exception.InvalidDayException;
 import imd.ufrn.familyroutine.service.exception.InvalidStateException;
-import imd.ufrn.familyroutine.service.exception.RecurringActivityException;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -39,8 +41,8 @@ public class GlobalHandlerException extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({ RecurringActivityException.class })
-    public ResponseEntity<Object> handleRecurringActivityException(RecurringActivityException ex, WebRequest request) {
+    @ExceptionHandler({ GroupActivityException.class })
+    public ResponseEntity<Object> handleGroupActivityException(GroupActivityException ex, WebRequest request) {
         RestResponse response = RestResponse.builder()
             .status(HttpStatus.BAD_REQUEST)
             .message(ex.getMessage())
@@ -57,5 +59,25 @@ public class GlobalHandlerException extends ResponseEntityExceptionHandler {
             .path(request.getDescription(false).substring(4))
             .build();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({ InvalidDayException.class })
+    public ResponseEntity<Object> handleInvaliDayException(InvalidDayException ex, WebRequest request) {
+        RestResponse response = RestResponse.builder()
+            .status(HttpStatus.BAD_REQUEST)
+            .message(ex.getMessage())
+            .path(request.getDescription(false).substring(4))
+            .build();
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({ EmailAlreadyInUseException.class })
+    public ResponseEntity<Object> handleEmailAlreadyInUseException(EmailAlreadyInUseException ex, WebRequest request) {
+        RestResponse response = RestResponse.builder()
+            .status(HttpStatus.UNPROCESSABLE_ENTITY)
+            .message(ex.getMessage())
+            .path(request.getDescription(false).substring(4))
+            .build();
+        return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }

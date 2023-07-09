@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import imd.ufrn.familyroutine.model.Activity;
 import imd.ufrn.familyroutine.model.ActivityState;
-import imd.ufrn.familyroutine.model.RecurringActivity;
+import imd.ufrn.familyroutine.model.GroupActivity;
 import imd.ufrn.familyroutine.model.api.ActivityMapper;
 import imd.ufrn.familyroutine.model.api.request.ActivityRequest;
 import imd.ufrn.familyroutine.model.api.request.FinishActivityRequest;
@@ -25,15 +25,15 @@ import imd.ufrn.familyroutine.model.api.response.ActivityResponse;
 import imd.ufrn.familyroutine.repository.ActivityRepository;
 import imd.ufrn.familyroutine.service.exception.EntityNotFoundException;
 import imd.ufrn.familyroutine.service.exception.InvalidStateException;
-import imd.ufrn.familyroutine.service.exception.RecurringActivityException;
-import imd.ufrn.familyroutine.service.exception.RecurringActivityType;
+import imd.ufrn.familyroutine.service.exception.GroupActivityException;
+import imd.ufrn.familyroutine.service.exception.GroupActivityType;
 
 @Service
 public class ActivityService {
 	@Autowired
     private ActivityRepository activityRepository;
     @Autowired
-    private RecurringActivityService recurringActivityService;
+    private GroupActivityService groupActivityService;
     @Autowired
     private ValidationService validationService;
     @Autowired
@@ -62,7 +62,7 @@ public class ActivityService {
     
     public ActivityResponse handleActivityRequest(ActivityRequest activityRequest) {
         if(activityRequest.isRepeat()) {
-            return this.activityMapper.mapActivityToActivityResponse(this.createRecurringActivities(activityRequest));
+            return this.activityMapper.mapActivityToActivityResponse(this.createGroupActivities(activityRequest));
         }
         else {
             Activity newActivity = this.activityMapper.mapActivityRequestToActivity(activityRequest);
@@ -112,8 +112,8 @@ public class ActivityService {
     }
 
     @Transactional
-	private Activity createRecurringActivities(ActivityRequest activityRequest) {
-        this.checkRecurringActivitiesFieldsThroughActivityRequest(activityRequest);
+	private Activity createGroupActivities(ActivityRequest activityRequest) {
+        this.checkGroupActivitiesFieldsThroughActivityRequest(activityRequest);
         
         List<Activity> activities = new ArrayList<>();
         activities.add(this.activityMapper.mapActivityRequestToActivity(activityRequest));
@@ -154,8 +154,8 @@ public class ActivityService {
             }
         }
 
-        RecurringActivity recurringActivity = this.recurringActivityService.createRecurringActivity(new RecurringActivity());
-        activities.forEach(activity -> activity.setRecurringActivityId(recurringActivity.getId()));
+        GroupActivity groupActivity = this.groupActivityService.createGroupActivity(new GroupActivity());
+        activities.forEach(activity -> activity.setGroupActivityId(groupActivity.getId()));
 
         return this.createMultipleActivities(activities).get(0);
 	}
@@ -174,16 +174,16 @@ public class ActivityService {
         return nextDate;
     }
 
-    private void checkRecurringActivitiesFieldsThroughActivityRequest(ActivityRequest activityRequest) {
+    private void checkGroupActivitiesFieldsThroughActivityRequest(ActivityRequest activityRequest) {
         if (activityRequest.getDaysToRepeat().isEmpty() || activityRequest.getRepeatUntil() == null) {
-            throw new RecurringActivityException(RecurringActivityType.FIELD);
+            throw new GroupActivityException(GroupActivityType.FIELD);
         }
 
         LocalDate startDate = activityRequest.getDateStart();
         LocalDate endDate = activityRequest.getRepeatUntil();
 
         if (startDate.isAfter(endDate)) {
-            throw new RecurringActivityException(RecurringActivityType.INTERVAL);
+            throw new GroupActivityException(GroupActivityType.INTERVAL);
         }
 
         // Check if there is no days lesser than 1 and greater than 7. Valid interval: [1,7]. 1 is Monday and 7 is Sunday.
@@ -198,7 +198,7 @@ public class ActivityService {
             .count();
 
         if (daysLesserThan1 > 0 || daysGreaterThan7 > 0) {
-            throw new RecurringActivityException(RecurringActivityType.DAY_INDEX);
+            throw new GroupActivityException(GroupActivityType.DAY_INDEX);
         }
     }
 }

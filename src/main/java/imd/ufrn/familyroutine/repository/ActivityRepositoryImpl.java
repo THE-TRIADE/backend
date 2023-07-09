@@ -41,7 +41,7 @@ public class ActivityRepositoryImpl implements ActivityRepository {
   @Override
   public Activity save(Activity activity) {
     KeyHolder keyHolder = new GeneratedKeyHolder();
-    String sql = "INSERT INTO activity (`name`,`description`,dateStart,dateEnd,hourStart,hourEnd,`state`,commentary,dependentId,currentGuardianId,actorId,createdBy,recurringActivityId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    String sql = "INSERT INTO activity (`name`,`description`,dateStart,dateEnd,hourStart,hourEnd,`state`,commentary,dependentId,currentGuardianId,actorId,createdBy,groupActivityId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
     
     
     jdbcTemplate.update(connection -> {
@@ -58,8 +58,8 @@ public class ActivityRepositoryImpl implements ActivityRepository {
       ps.setLong(10, activity.getCurrentGuardian());
       ps.setLong(11, activity.getActor());
       ps.setLong(12, activity.getCreatedBy());
-      if (activity.getRecurringActivityId() != null){
-        ps.setLong(13, activity.getRecurringActivityId());
+      if (activity.getGroupActivityId() != null){
+        ps.setLong(13, activity.getGroupActivityId());
       }
       else {
         ps.setNull(13, 0);

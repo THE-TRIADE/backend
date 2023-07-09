@@ -2,10 +2,10 @@ package imd.ufrn.familyroutine.service.exception;
 
 import imd.ufrn.familyroutine.FamilyRoutineException;
 
-public class RecurringActivityException extends FamilyRoutineException {
-    private RecurringActivityType type;
+public class GroupActivityException extends FamilyRoutineException {
+    private GroupActivityType type;
 
-    public RecurringActivityException (RecurringActivityType type) {
+    public GroupActivityException (GroupActivityType type) {
         this.type = type;
     }
 
@@ -13,13 +13,13 @@ public class RecurringActivityException extends FamilyRoutineException {
     public String getMessage() {
         String message = "";
 
-        if(type == RecurringActivityType.FIELD) {
+        if(type == GroupActivityType.FIELD) {
             message += "'repeat' field is true. Check if both 'repeatUntil' and 'daysToRepeat' fields are filled correctly.";
         }
-        else if (type == RecurringActivityType.DAY_INDEX) {
+        else if (type == GroupActivityType.DAY_INDEX) {
             message += "'daysToRepeat' has a number either lesser than one or greater than seven. Please try again.";
         }
-        else if (type == RecurringActivityType.INTERVAL) {
+        else if (type == GroupActivityType.INTERVAL) {
             message += "'repeatUntil' date occurs before the first activity date. Please try again.";
         }
         

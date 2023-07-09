@@ -26,7 +26,6 @@ public class GuardianMapper {
         List<GuardToGuardianResponse> guardToGuardianResponse = new ArrayList<>();
         guards.forEach(guard -> {
             GuardToGuardianResponse gtgr = new GuardToGuardianResponse();
-            gtgr.setId(guard.getId());
             gtgr.setDaysOfWeek(guard.getDaysOfWeek());
             gtgr.setGuardianRole(guard.getGuardianRole());
             gtgr.setDependentId(guard.getDependentId());

@@ -63,7 +63,7 @@ public class ActivityMapper {
         Guardian createdByGuardian = this.guardianService.findGuardianById(activity.getCreatedBy());
         activityResponse.setCreatedByEmail(createdByGuardian.getEmail());
         activityResponse.setCreatedByName(createdByGuardian.getName());
-        activityResponse.setRecurringActivityId(activity.getRecurringActivityId());
+        activityResponse.setGroupActivityId(activity.getGroupActivityId());
 
         if(activity.getCommentary() != null) {
             activityResponse.setCommentary(activity.getCommentary());

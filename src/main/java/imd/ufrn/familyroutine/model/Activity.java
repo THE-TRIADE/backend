@@ -22,7 +22,7 @@ public class Activity {
     private Long actor;
     private Long createdBy;
     private Long finishedBy;
-    private Long recurringActivityId;
+    private Long groupActivityId;
     
     public Activity() {
     }
@@ -111,10 +111,10 @@ public class Activity {
     public void setFinishedBy(Long finishedBy) {
         this.finishedBy = finishedBy;
     }
-    public Long getRecurringActivityId() {
-        return recurringActivityId;
+    public Long getGroupActivityId() {
+        return groupActivityId;
     }
-    public void setRecurringActivityId(Long recurringActivityId) {
-        this.recurringActivityId = recurringActivityId;
+    public void setGroupActivityId(Long groupActivityId) {
+        this.groupActivityId = groupActivityId;
     }
 }

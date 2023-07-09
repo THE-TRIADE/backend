@@ -1,12 +1,12 @@
 package imd.ufrn.familyroutine.model;
 
-public class RecurringActivity {
+public class GroupActivity {
     Long id;
     
-    public RecurringActivity() {
+    public GroupActivity() {
     }
 
-    public RecurringActivity(Long id) {
+    public GroupActivity(Long id) {
         this.id = id;
     }
 

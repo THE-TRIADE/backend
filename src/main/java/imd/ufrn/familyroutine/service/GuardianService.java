@@ -2,8 +2,8 @@ package imd.ufrn.familyroutine.service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,7 @@ import imd.ufrn.familyroutine.model.api.response.FamilyGroupResponse;
 import imd.ufrn.familyroutine.model.api.response.GuardResponse;
 import imd.ufrn.familyroutine.model.api.response.GuardianResponse;
 import imd.ufrn.familyroutine.repository.GuardianRepository;
+import imd.ufrn.familyroutine.service.exception.EmailAlreadyInUseException;
 import imd.ufrn.familyroutine.service.exception.EntityNotFoundException;
 
 @Service
@@ -59,6 +60,8 @@ public class GuardianService {
         Guardian guardian = this.guardianRepository
                                 .findById(guardianId)
                                 .orElseThrow(() -> new EntityNotFoundException(guardianId, Guardian.class));
+
+        // FIXME Fazer apenas uma consulta: findFamilyGroupsByGuardianId
         List<GuardResponse> guards = this.guardService.findGuardsByGuardianId(guardianId);
         Set<FamilyGroupResponse> familyGroups = new HashSet<>();
         guards.stream()
@@ -74,8 +77,7 @@ public class GuardianService {
     public Guardian createGuardianInCascade(Guardian newGuardian) {
         Person personCreated = this.personService.createPerson(newGuardian);
         newGuardian.setId(personCreated.getId());
-        this.createGuardian(newGuardian);
-        return newGuardian;
+        return this.createGuardian(newGuardian);
     }
 
     @Transactional
@@ -97,7 +99,15 @@ public class GuardianService {
     }
 
     private Guardian createGuardian(Guardian newGuardian) {
+        this.guardianValidOrError(newGuardian);
         newGuardian.setPassword(passwordEncoder.encode(newGuardian.getPassword()));
         return this.guardianRepository.save(newGuardian);
+    }
+
+    private void guardianValidOrError(Guardian guardian) {
+        Optional<Guardian> guardianOptional = this.guardianRepository.findByEmail(guardian.getEmail());
+        if(guardianOptional.isPresent()) {
+            throw new EmailAlreadyInUseException();
+        }
     }
 }

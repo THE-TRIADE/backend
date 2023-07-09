@@ -1,13 +1,13 @@
 CREATE TABLE `person` (
     id BIGINT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(100) NOT NULL,
-    cpf VARCHAR(11) NOT NULL,
+    cpf VARCHAR(11) UNIQUE NOT NULL,
     birthDate DATE NOT NULL,
     PRIMARY KEY(id)
 );
 
 CREATE TABLE `guardian` (
-    email VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
     `password` VARCHAR(256) NOT NULL,
     personId BIGINT UNIQUE, 
     FOREIGN KEY(personId) REFERENCES `person`(id) ON DELETE CASCADE,
@@ -19,6 +19,15 @@ CREATE TABLE `family_group` (
     `name` VARCHAR(100) NOT NULL
 );
 
+CREATE TABLE `guardian_in_family_group` (
+    familyGroupId BIGINT NOT NULL, 
+    guardianId BIGINT NOT NULL, 
+
+    FOREIGN KEY(familyGroupId) REFERENCES `family_group`(id) ON DELETE CASCADE,
+    FOREIGN KEY(guardianId) REFERENCES `guardian`(personId) ON DELETE CASCADE,
+    PRIMARY KEY(familyGroupId, guardianId)
+);
+
 CREATE TABLE `dependent` (
     personId BIGINT UNIQUE,
 
@@ -27,24 +36,23 @@ CREATE TABLE `dependent` (
 
     FOREIGN KEY(personId) REFERENCES `person`(id) ON DELETE CASCADE,
     PRIMARY KEY(personId)
-
 );
 
-CREATE TABLE `recurring_activity` (
+CREATE TABLE `group_activity` (
     id BIGINT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY(id)
 );
 
 CREATE TABLE `guard`(
-    id BIGINT NOT NULL AUTO_INCREMENT,
-    daysOfWeek VARCHAR(56),
-    guardianRole VARCHAR(9) NOT NULL,
-
     dependentId BIGINT NOT NULL, 
     guardianId BIGINT NOT NULL, 
 
+    daysOfWeek VARCHAR(56),
+    guardianRole VARCHAR(9) NOT NULL,
+
     FOREIGN KEY(dependentId) REFERENCES `dependent`(personId) ON DELETE CASCADE,
-    FOREIGN KEY(guardianId) REFERENCES `guardian`(personId) ON DELETE CASCADE
+    FOREIGN KEY(guardianId) REFERENCES `guardian`(personId) ON DELETE CASCADE,
+    PRIMARY KEY(dependentId, guardianId)
 );
 
 CREATE TABLE `activity`(
@@ -63,14 +71,14 @@ CREATE TABLE `activity`(
     actorId BIGINT NOT NULL, 
     createdBy BIGINT NOT NULL,
     finishedBy BIGINT,   
-    recurringActivityId BIGINT,   
+    groupActivityId BIGINT,   
       
     FOREIGN KEY(dependentId) REFERENCES `dependent`(personId),
     FOREIGN KEY(currentGuardianId) REFERENCES `guardian`(personId),
     FOREIGN KEY(actorId) REFERENCES `person`(id),
     FOREIGN KEY(createdBy) REFERENCES `guardian`(personId),
     FOREIGN KEY(finishedBy) REFERENCES `guardian`(personId),
-    FOREIGN KEY(recurringActivityId) REFERENCES `recurring_activity`(id),
+    FOREIGN KEY(groupActivityId) REFERENCES `group_activity`(id),
     PRIMARY KEY(id)
 );
 

@@ -58,8 +58,6 @@ public class GuardMapper {
 
       guardResponse.setDaysOfWeek(daysInt);
     }
-
-    guardResponse.setId(guard.getId());
     guardResponse.setGuardianRole(guard.getGuardianRole());
 
     guardResponse.setDependentId(guard.getDependentId());

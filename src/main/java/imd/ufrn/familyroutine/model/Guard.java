@@ -7,30 +7,20 @@ import org.springframework.data.annotation.Id;
 
 public class Guard {
   @Id
-  private Long id;
+  private Long dependentId;
+  @Id
+  private Long guardianId;
   private List<DayOfWeek> daysOfWeek;
   private GuardianRole guardianRole;
-  private Long dependentId;
-  private Long guardianId;
 
   public Guard() {
   }
 
-  public Guard(Long id, List<DayOfWeek> daysOfWeek, GuardianRole guardianRole, Long dependentId,
-      Long guardianId) {
-    this.id = id;
+  public Guard(Long dependentId, Long guardianId, List<DayOfWeek> daysOfWeek, GuardianRole guardianRole) {
     this.daysOfWeek = daysOfWeek;
     this.guardianRole = guardianRole;
     this.dependentId = dependentId;
     this.guardianId = guardianId;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 
   public List<DayOfWeek> getDaysOfWeek() {

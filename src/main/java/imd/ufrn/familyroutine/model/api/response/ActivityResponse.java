@@ -32,7 +32,7 @@ public class ActivityResponse {
     private Long finishedById;
     private String finishedByName;
 
-    private Long recurringActivityId;
+    private Long groupActivityId;
 
     public ActivityResponse() {
     }
@@ -197,11 +197,11 @@ public class ActivityResponse {
         this.state = state;
     }
 
-    public Long getRecurringActivityId() {
-        return recurringActivityId;
+    public Long getGroupActivityId() {
+        return groupActivityId;
     }
 
-    public void setRecurringActivityId(Long recurringActivityId) {
-        this.recurringActivityId = recurringActivityId;
+    public void setGroupActivityId(Long groupActivityId) {
+        this.groupActivityId = groupActivityId;
     }
 }

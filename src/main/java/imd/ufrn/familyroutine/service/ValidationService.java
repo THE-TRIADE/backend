@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import imd.ufrn.familyroutine.model.Activity;
 import imd.ufrn.familyroutine.service.exception.ActivityIntervalException;
 import imd.ufrn.familyroutine.service.exception.ActivityIntervalType;
+import imd.ufrn.familyroutine.service.exception.InvalidDayException;
 
 @Service
 public class ValidationService {
@@ -44,7 +45,7 @@ public class ValidationService {
             .count();
 
         if (daysLesserThan1 > 0 || daysGreaterThan7 > 0) {
-            // TODO Lançar exceção que intervalo de dia está inválido
+           throw new InvalidDayException();
         }
         return daysOfWeek;
     }

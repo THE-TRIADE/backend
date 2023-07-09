@@ -5,7 +5,6 @@ import java.util.List;
 import imd.ufrn.familyroutine.model.GuardianRole;
 
 public class GuardResponse {
-  private Long id;
   private List<Integer> daysOfWeek;
   private GuardianRole guardianRole;
 
@@ -17,14 +16,6 @@ public class GuardResponse {
   private String guardianEmail;
 
   public GuardResponse() {
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 
   public List<Integer> getDaysOfWeek() {

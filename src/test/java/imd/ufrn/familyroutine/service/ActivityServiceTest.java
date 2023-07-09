@@ -21,15 +21,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import imd.ufrn.familyroutine.model.Activity;
 import imd.ufrn.familyroutine.model.ActivityState;
-import imd.ufrn.familyroutine.model.RecurringActivity;
+import imd.ufrn.familyroutine.model.GroupActivity;
 import imd.ufrn.familyroutine.model.api.ActivityMapper;
 import imd.ufrn.familyroutine.model.api.request.ActivityRequest;
 import imd.ufrn.familyroutine.model.api.response.ActivityResponse;
 import imd.ufrn.familyroutine.repository.ActivityRepository;
 import imd.ufrn.familyroutine.service.exception.ActivityIntervalException;
 import imd.ufrn.familyroutine.service.exception.ActivityIntervalType;
-import imd.ufrn.familyroutine.service.exception.RecurringActivityException;
-import imd.ufrn.familyroutine.service.exception.RecurringActivityType;
+import imd.ufrn.familyroutine.service.exception.GroupActivityException;
+import imd.ufrn.familyroutine.service.exception.GroupActivityType;
 
 @ExtendWith(SpringExtension.class)
 public class ActivityServiceTest {
@@ -47,7 +47,7 @@ public class ActivityServiceTest {
     private ValidationService validationService;
 
     @Mock
-    private RecurringActivityService recurringActivityService;
+    private GroupActivityService groupActivityService;
 
     @Nested
     public class CreateActivity {
@@ -189,7 +189,7 @@ public class ActivityServiceTest {
         @Nested
         public class WhenTheParamRepeatIsTrueButRepeatUntilIsNull {
             @Test
-            public void shouldThrowRecurringActivityFieldException() {
+            public void shouldThrowGroupActivityFieldException() {
                 dateTimeStart = LocalDateTime.now();
                 dateTimeEnd = LocalDateTime.now().plusHours(2);
                 activityRequest.setDateStart(dateTimeStart.toLocalDate());
@@ -204,8 +204,8 @@ public class ActivityServiceTest {
                 activity.setHourStart(Time.valueOf(activityRequest.getHourStart()));
                 activity.setHourEnd(Time.valueOf(activityRequest.getHourStart()));
 
-                Mockito.when(activityMapper.mapActivityToActivityResponse(activity)).thenThrow(new RecurringActivityException(RecurringActivityType.FIELD));
-                Throwable exception = assertThrows(RecurringActivityException.class, () -> {
+                Mockito.when(activityMapper.mapActivityToActivityResponse(activity)).thenThrow(new GroupActivityException(GroupActivityType.FIELD));
+                Throwable exception = assertThrows(GroupActivityException.class, () -> {
                     activityService.handleActivityRequest(activityRequest);
                 });
 
@@ -216,7 +216,7 @@ public class ActivityServiceTest {
         @Nested
         public class WhenTheParamRepeatIsTrueButDaysToRepeatIsEmpty {
             @Test
-            public void shouldThrowRecurringActivityFieldException() {
+            public void shouldThrowGroupActivityFieldException() {
                 dateTimeStart = LocalDateTime.now();
                 dateTimeEnd = LocalDateTime.now().plusHours(2);
                 activityRequest.setDateStart(dateTimeStart.toLocalDate());
@@ -232,8 +232,8 @@ public class ActivityServiceTest {
                 activity.setHourStart(Time.valueOf(activityRequest.getHourStart()));
                 activity.setHourEnd(Time.valueOf(activityRequest.getHourStart()));
 
-                Mockito.when(activityMapper.mapActivityToActivityResponse(activity)).thenThrow(new RecurringActivityException(RecurringActivityType.FIELD));
-                Throwable exception = assertThrows(RecurringActivityException.class, () -> {
+                Mockito.when(activityMapper.mapActivityToActivityResponse(activity)).thenThrow(new GroupActivityException(GroupActivityType.FIELD));
+                Throwable exception = assertThrows(GroupActivityException.class, () -> {
                     activityService.handleActivityRequest(activityRequest);
                 });
 
@@ -244,7 +244,7 @@ public class ActivityServiceTest {
         @Nested
         public class WhenTheParamRepeatIsTrueButRepeatUntilIsBeforeFirstActivityDateStart {
             @Test
-            public void shouldThrowRecurringActivityIntervalException() {
+            public void shouldThrowGroupActivityIntervalException() {
                 dateTimeStart = LocalDateTime.now();
                 dateTimeEnd = LocalDateTime.now().plusHours(2);
                 activityRequest.setDateStart(dateTimeStart.toLocalDate());
@@ -260,8 +260,8 @@ public class ActivityServiceTest {
                 activity.setHourStart(Time.valueOf(activityRequest.getHourStart()));
                 activity.setHourEnd(Time.valueOf(activityRequest.getHourStart()));
 
-                Mockito.when(activityMapper.mapActivityToActivityResponse(activity)).thenThrow(new RecurringActivityException(RecurringActivityType.INTERVAL));
-                Throwable exception = assertThrows(RecurringActivityException.class, () -> {
+                Mockito.when(activityMapper.mapActivityToActivityResponse(activity)).thenThrow(new GroupActivityException(GroupActivityType.INTERVAL));
+                Throwable exception = assertThrows(GroupActivityException.class, () -> {
                     activityService.handleActivityRequest(activityRequest);
                 });
 
@@ -272,7 +272,7 @@ public class ActivityServiceTest {
         @Nested
         public class WhenTheParamRepeatIsTrueButDaysToRepeatHasValueLesserThanOne {
             @Test
-            public void shouldThrowRecurringActivityDayIndexException() {
+            public void shouldThrowGroupActivityDayIndexException() {
                 dateTimeStart = LocalDateTime.now();
                 dateTimeEnd = LocalDateTime.now().plusHours(2);
                 activityRequest.setDateStart(dateTimeStart.toLocalDate());
@@ -288,8 +288,8 @@ public class ActivityServiceTest {
                 activity.setHourStart(Time.valueOf(activityRequest.getHourStart()));
                 activity.setHourEnd(Time.valueOf(activityRequest.getHourStart()));
 
-                Mockito.when(activityMapper.mapActivityToActivityResponse(activity)).thenThrow(new RecurringActivityException(RecurringActivityType.DAY_INDEX));
-                Throwable exception = assertThrows(RecurringActivityException.class, () -> {
+                Mockito.when(activityMapper.mapActivityToActivityResponse(activity)).thenThrow(new GroupActivityException(GroupActivityType.DAY_INDEX));
+                Throwable exception = assertThrows(GroupActivityException.class, () -> {
                     activityService.handleActivityRequest(activityRequest);
                 });
 
@@ -300,7 +300,7 @@ public class ActivityServiceTest {
         @Nested
         public class WhenTheParamRepeatIsTrueButDaysToRepeatHasValueGreaterThanSeven {
             @Test
-            public void shouldThrowRecurringActivityDayIndexException() {
+            public void shouldThrowGroupActivityDayIndexException() {
                 dateTimeStart = LocalDateTime.now();
                 dateTimeEnd = LocalDateTime.now().plusHours(2);
                 activityRequest.setDateStart(dateTimeStart.toLocalDate());
@@ -316,8 +316,8 @@ public class ActivityServiceTest {
                 activity.setHourStart(Time.valueOf(activityRequest.getHourStart()));
                 activity.setHourEnd(Time.valueOf(activityRequest.getHourStart()));
 
-                Mockito.when(activityMapper.mapActivityToActivityResponse(activity)).thenThrow(new RecurringActivityException(RecurringActivityType.DAY_INDEX));
-                Throwable exception = assertThrows(RecurringActivityException.class, () -> {
+                Mockito.when(activityMapper.mapActivityToActivityResponse(activity)).thenThrow(new GroupActivityException(GroupActivityType.DAY_INDEX));
+                Throwable exception = assertThrows(GroupActivityException.class, () -> {
                     activityService.handleActivityRequest(activityRequest);
                 });
 
@@ -349,10 +349,10 @@ public class ActivityServiceTest {
                 activityResponse.setHourStart(activity.getHourStart());
                 activityResponse.setHourEnd(activity.getHourEnd());
 
-                RecurringActivity groupActivity = new RecurringActivity(1L);
+                GroupActivity groupActivity = new GroupActivity(1L);
 
                 Mockito.when(activityMapper.mapActivityRequestToActivity(activityRequest)).thenReturn(activity);
-                Mockito.when(recurringActivityService.createRecurringActivity(Mockito.any(RecurringActivity.class))).thenReturn(groupActivity);
+                Mockito.when(groupActivityService.createGroupActivity(Mockito.any(GroupActivity.class))).thenReturn(groupActivity);
                 Mockito.when(validationService.validActivityOrError(Mockito.any())).thenReturn(Mockito.any());
                 Mockito.when(activityMapper.mapActivityToActivityResponse(activity)).thenReturn(activityResponse);
                 

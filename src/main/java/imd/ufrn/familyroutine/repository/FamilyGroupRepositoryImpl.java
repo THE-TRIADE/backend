@@ -2,6 +2,7 @@ package imd.ufrn.familyroutine.repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,13 +80,13 @@ public class FamilyGroupRepositoryImpl implements FamilyGroupRepository {
   }
 
   @Override
-  public Optional<List<Dependent>> findDependentsByFamilyGroupId(Long familyGroupId){
+  public List<Dependent> findDependentsByFamilyGroupId(Long familyGroupId){
       String sql = "SELECT * FROM PERSON INNER JOIN DEPENDENT ON PERSON.id = DEPENDENT.personId WHERE familyGroupId = ?";
       try {
-        return Optional.of(jdbcTemplate.query(sql, new DependentMapper(), familyGroupId));
+        return jdbcTemplate.query(sql, new DependentMapper(), familyGroupId);
       }
       catch(EmptyResultDataAccessException ex) {
-          return Optional.empty();
+          return new ArrayList<>();
       }
   }
 

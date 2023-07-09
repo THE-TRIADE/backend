@@ -2,7 +2,8 @@ package imd.ufrn.familyroutine.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -16,9 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import imd.ufrn.familyroutine.model.Dependent;
@@ -47,87 +45,6 @@ public class FamilyGroupServiceTest {
     
     @Mock
     private GuardService guardService;
-
-    @Nested
-    public class FindAll {
-
-        @Nested
-        public class WhenIsEmpty {
-            @Test
-            void shouldReturnAnEmptyList() {
-                Mockito.when(familyGroupRepository.findAll()).thenReturn(List.of());
-                Mockito.when(familyGroupMapper.mapFamilyGroupToFamilyGroupResponse(null)).thenReturn(null);
-
-                List<FamilyGroupResponse> familyGroups = familyGroupService.findAll();
-                
-                assertTrue(familyGroups.isEmpty());
-            }
-        }
-
-        @Nested
-        public class WhenHasOneFamilyGroup {
-            @Test
-            void shouldReturnAnListWithOneFamilyGroupResponse() {
-                FamilyGroup testRepository = new FamilyGroup("Test");
-                FamilyGroupResponse testResponse = new FamilyGroupResponse();
-                testResponse.setId(1L);
-                testResponse.setName(testRepository.getName());
-                List<FamilyGroup> findAllResponse = new ArrayList<>();
-                findAllResponse.add(testRepository);
-
-                Mockito.when(familyGroupRepository.findAll()).thenReturn(findAllResponse);
-                Mockito.when(familyGroupMapper.mapFamilyGroupToFamilyGroupResponse(testRepository)).thenReturn(testResponse);
-                
-                List<FamilyGroupResponse> familyGroups = familyGroupService.findAll();
-
-                assertTrue(familyGroups.size() == 1);
-                familyGroups.forEach(familyGroup -> {
-                    assertEquals(1, familyGroup.getId());
-                    assertEquals("Test", familyGroup.getName());
-                });
-            }
-        }
-
-        @Nested
-        public class WhenHasMoreThanOneFamilyGroup {
-            @Test
-            void shouldReturnAnListWithMoreThanOneFamilyGroupResponse() {
-                List<FamilyGroup> testRepositories = new ArrayList<>();
-                List<FamilyGroupResponse> testResponses = new ArrayList<>();
-                
-                for (Long i = 0L; i < 3L; ++i){
-                    FamilyGroup familyGroup = new FamilyGroup("Test " + i);
-                    familyGroup.setId(i);
-                    testRepositories.add(familyGroup);
-
-                    FamilyGroupResponse familyGroupResponse = new FamilyGroupResponse();
-                    familyGroupResponse.setId(familyGroup.getId());
-                    familyGroupResponse.setName(familyGroup.getName());
-                    testResponses.add(familyGroupResponse);
-                };
-
-                Mockito.when(familyGroupRepository.findAll()).thenReturn(testRepositories);
-                Mockito.when(familyGroupMapper.mapFamilyGroupToFamilyGroupResponse(testRepositories.get(0)))
-                    .thenReturn(testResponses.get(0));
-                Mockito.when(familyGroupMapper.mapFamilyGroupToFamilyGroupResponse(testRepositories.get(1)))
-                    .thenReturn(testResponses.get(1));
-                Mockito.when(familyGroupMapper.mapFamilyGroupToFamilyGroupResponse(testRepositories.get(2)))
-                    .thenReturn(testResponses.get(2));
-                
-                List<FamilyGroupResponse> familyGroups = familyGroupService.findAll();
-
-                assertTrue(familyGroups.size() == 3);
-                assertEquals(0L, familyGroups.get(0).getId());
-                assertEquals("Test " + 0, familyGroups.get(0).getName());
-                assertEquals(1L, familyGroups.get(1).getId());
-                assertEquals("Test " + 1, familyGroups.get(1).getName());
-                assertEquals(2L, familyGroups.get(2).getId());
-                assertEquals("Test " + 2, familyGroups.get(2).getName());
-                
-            }
-        }
-
-    }
 
     @Nested
     public class FindFamilyGroupById {
@@ -235,7 +152,7 @@ public class FamilyGroupServiceTest {
         public void shouldDeleteFamilyGroupById() {
             Long familyGroupId = 1L;
 
-            Mockito.when(familyGroupRepository.findDependentsByFamilyGroupId(familyGroupId)).thenReturn(Optional.of(new ArrayList<Dependent>()));
+            Mockito.when(familyGroupRepository.findDependentsByFamilyGroupId(familyGroupId)).thenReturn(new ArrayList<Dependent>());
             
             familyGroupService.deleteFamilyGroupById(familyGroupId); 
             
@@ -246,28 +163,13 @@ public class FamilyGroupServiceTest {
     }
 
     @Nested
-    public class DeleteAllFamilyGroups{
-
-        @Test
-        public void shouldDeleteFamilyGroupById() {
-            Mockito.doNothing().when(familyGroupRepository).deleteAll();
-            Mockito.doNothing().when(dependentService).deleteAllDependents();
-            
-            familyGroupService.deleteAllFamilyGroups(); 
-            
-            verify(dependentService, times(1)).deleteAllDependents();
-            verify(familyGroupRepository, times(1)).deleteAll();
-        }
-    }
-
-    @Nested
     public class GetFamilyGroupDependentsByFamilyGroupId{
         
         @Test
         public void shouldTryFindFDependents(){
             Long familyGroupId = 1L;
 
-            Mockito.when(familyGroupRepository.findDependentsByFamilyGroupId(familyGroupId)).thenReturn(Optional.of(new ArrayList<Dependent>()));
+            Mockito.when(familyGroupRepository.findDependentsByFamilyGroupId(familyGroupId)).thenReturn(new ArrayList<Dependent>());
 
             familyGroupService.getFamilyGroupDependentsByFamilyGroupId(familyGroupId);
             
@@ -282,7 +184,7 @@ public class FamilyGroupServiceTest {
             dependents.add(new Dependent(1L, "Teste 1", "12345678910L", Date.valueOf(LocalDateTime.now().toLocalDate())));
             dependents.add(new Dependent(2L, "Teste 2", "01987654321L", Date.valueOf(LocalDateTime.now().toLocalDate())));
 
-            Mockito.when(familyGroupRepository.findDependentsByFamilyGroupId(familyGroupId)).thenReturn(Optional.of(dependents));
+            Mockito.when(familyGroupRepository.findDependentsByFamilyGroupId(familyGroupId)).thenReturn(dependents);
 
             List<Dependent> dependentsResult = familyGroupService.getFamilyGroupDependentsByFamilyGroupId(familyGroupId);
             

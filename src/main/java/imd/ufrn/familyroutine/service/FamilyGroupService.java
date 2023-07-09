@@ -1,6 +1,5 @@
 package imd.ufrn.familyroutine.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import imd.ufrn.familyroutine.model.Dependent;
 import imd.ufrn.familyroutine.model.FamilyGroup;
-import imd.ufrn.familyroutine.model.Guard;
+import imd.ufrn.familyroutine.model.GuardianInFamilyGroup;
 import imd.ufrn.familyroutine.model.api.FamilyGroupMapper;
 import imd.ufrn.familyroutine.model.api.request.FamilyGroupRequest;
 import imd.ufrn.familyroutine.model.api.request.GuardRequest;
@@ -26,40 +25,48 @@ public class FamilyGroupService{
     @Autowired
     private GuardService guardService;
     @Autowired
+    private GuardianInFamilyGroupService guardianInFamilyGroupService;
+    @Autowired
     private FamilyGroupMapper familyGroupMapper;
 
-    public List<FamilyGroupResponse> findAll() {
-                return this.familyGroupRepository
-                .findAll()
-                .stream()
-                .map(this.familyGroupMapper::mapFamilyGroupToFamilyGroupResponse)
-                .toList();
+    public List<FamilyGroupResponse> findFamilyGroupsByGuardianId(Long guardianId) {
+        return
+        this.guardianInFamilyGroupService
+            .findGuardianInFamilyGroupsByGuardianId(guardianId)
+            .stream()
+            .map(GuardianInFamilyGroup::getFamilyGroupId)
+            .map(this::findFamilyGroupById)
+            .toList();
     }
 
     public FamilyGroupResponse findFamilyGroupById(Long familyGroupId) {
-        return this.familyGroupMapper.mapFamilyGroupToFamilyGroupResponse(
-            this.familyGroupRepository.findById(familyGroupId).orElseThrow(
-                () -> new EntityNotFoundException(familyGroupId, FamilyGroup.class)));
+        return 
+        this.familyGroupMapper
+            .mapFamilyGroupToFamilyGroupResponse(
+                this.familyGroupRepository
+                    .findById(familyGroupId)
+                    .orElseThrow(
+                        () -> new EntityNotFoundException(familyGroupId, FamilyGroup.class)
+                    )
+            );
     }
 
+    @Transactional
     public void deleteFamilyGroupById(Long familyGroupId) {
-        this.getFamilyGroupDependentsByFamilyGroupId(familyGroupId).forEach(
-            (x) -> {dependentService.deleteDependentById(x.getId());} );
+        this.getFamilyGroupDependentsByFamilyGroupId(familyGroupId)
+            .forEach((familyGroup) -> {
+                dependentService.deleteDependentById(familyGroup.getId());
+            });
         this.familyGroupRepository.deleteById(familyGroupId);
-    }
-
-    public void deleteAllFamilyGroups() {
-        this.dependentService.deleteAllDependents();
-        this.familyGroupRepository.deleteAll();
     }
     
     @Transactional
     public FamilyGroupResponse createFamilyGroup(FamilyGroupRequest familyGroupRequest) {
         FamilyGroup familyGroup = this.familyGroupRepository.save(familyGroupMapper.mapFamilyGroupRequestToFamilyGroup(familyGroupRequest));
         
-        if(familyGroupRequest.getDependents() == null) {
-            return this.familyGroupMapper.mapFamilyGroupToFamilyGroupResponse(familyGroup);
-        }
+        GuardianInFamilyGroup guardianInFamilyGroup = new GuardianInFamilyGroup(familyGroupRequest.getGuardianId(), familyGroup.getId());
+        this.guardianInFamilyGroupService.createGuardianInFamilyGroup(guardianInFamilyGroup);
+
         for (Dependent dependent : familyGroupRequest.getDependents()) {
             dependent.setFamilyGroupId(familyGroup.getId());
             dependent.setId(dependentService.createDependentInCascade(dependent).getId());
@@ -77,14 +84,17 @@ public class FamilyGroupService{
     }
 
     public List<Dependent> getFamilyGroupDependentsByFamilyGroupId(Long familyGroupId){
-        return familyGroupRepository.findDependentsByFamilyGroupId(familyGroupId)
-                .orElse(new ArrayList<Dependent>());
+        return familyGroupRepository.findDependentsByFamilyGroupId(familyGroupId);
     }
 
     public FamilyGroupResponse findByDependentId(Long dependentId) {
         return this.familyGroupMapper
             .mapFamilyGroupToFamilyGroupResponse(
-                this.familyGroupRepository.findByDependentId(dependentId).orElseThrow(
-                        () -> new EntityNotFoundException(dependentId, Dependent.class)));
+                this.familyGroupRepository
+                    .findByDependentId(dependentId)
+                    .orElseThrow(
+                        () -> new EntityNotFoundException(dependentId, Dependent.class)
+                    )
+            );
     }
 }

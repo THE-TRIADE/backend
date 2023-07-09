@@ -5,19 +5,11 @@ import java.util.List;
 import imd.ufrn.familyroutine.model.GuardianRole;
 
 public class GuardToGuardianResponse {
-    private Long id;
     private List<Integer> daysOfWeek;
     private GuardianRole guardianRole;
     private Long dependentId;
     private String dependentName;
     
-    public GuardToGuardianResponse() {}
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
     public List<Integer> getDaysOfWeek() {
         return daysOfWeek;
     }

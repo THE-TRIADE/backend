@@ -11,29 +11,29 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import imd.ufrn.familyroutine.model.RecurringActivity;
-import imd.ufrn.familyroutine.repository.mappers.RecurringActivityMapper;
+import imd.ufrn.familyroutine.model.GroupActivity;
+import imd.ufrn.familyroutine.repository.mappers.GroupActivityMapper;
 
 @Repository
-public class RecurringActivityRepositoryImpl implements RecurringActivityRepository {
+public class GroupActivityRepositoryImpl implements GroupActivityRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public Optional<RecurringActivity> findById(Long id) {
-        String sql = "SELECT * FROM recurring_activity WHERE id = ?";       
+    public Optional<GroupActivity> findById(Long id) {
+        String sql = "SELECT * FROM group_activity WHERE id = ?";       
         try {
-            return Optional.of(jdbcTemplate.queryForObject(sql, new RecurringActivityMapper(), id));
+            return Optional.of(jdbcTemplate.queryForObject(sql, new GroupActivityMapper(), id));
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         } 
     }
 
     @Override
-    public RecurringActivity save(RecurringActivity activity) {
+    public GroupActivity save(GroupActivity activity) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        String sql = "INSERT INTO recurring_activity () VALUES ()";
+        String sql = "INSERT INTO group_activity () VALUES ()";
 
         jdbcTemplate.update(connection -> { 
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -45,13 +45,13 @@ public class RecurringActivityRepositoryImpl implements RecurringActivityReposit
 
     @Override
     public void deleteById(Long id) {
-        String sql = "DELETE FROM recurring_activity WHERE id = ?";
+        String sql = "DELETE FROM group_activity WHERE id = ?";
         jdbcTemplate.update(sql, new Object[] { id });
     }
 
     @Override
     public void deleteAll() {
-        String sql = "DELETE FROM recurring_activity";
+        String sql = "DELETE FROM group_activity";
         jdbcTemplate.update(sql);
     }
 }

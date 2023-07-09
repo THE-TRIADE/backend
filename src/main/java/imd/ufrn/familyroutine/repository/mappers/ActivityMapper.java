@@ -26,7 +26,7 @@ public class ActivityMapper implements RowMapper<Activity>{
     activity.setActor(resultSet.getLong("actorId"));
     activity.setCreatedBy(resultSet.getLong("createdBy"));
     activity.setFinishedBy(resultSet.getLong("FinishedBy"));
-    activity.setRecurringActivityId(resultSet.getLong("RecurringActivityId"));
+    activity.setGroupActivityId(resultSet.getLong("groupActivityId"));
     return activity;
   }
     
