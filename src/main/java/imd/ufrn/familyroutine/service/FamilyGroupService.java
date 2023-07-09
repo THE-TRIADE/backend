@@ -1,5 +1,6 @@
 package imd.ufrn.familyroutine.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,13 +78,13 @@ public class FamilyGroupService{
 
     public List<Dependent> getFamilyGroupDependentsByFamilyGroupId(Long familyGroupId){
         return familyGroupRepository.findDependentsByFamilyGroupId(familyGroupId)
-                .orElseThrow(
-                 () -> new EntityNotFoundException(familyGroupId, FamilyGroup.class));
+                .orElse(new ArrayList<Dependent>());
     }
 
     public FamilyGroupResponse findByDependentId(Long dependentId) {
         return this.familyGroupMapper
             .mapFamilyGroupToFamilyGroupResponse(
-                this.familyGroupRepository.findByDependentId(dependentId).get());
+                this.familyGroupRepository.findByDependentId(dependentId).orElseThrow(
+                        () -> new EntityNotFoundException(dependentId, Dependent.class)));
     }
 }
