@@ -34,7 +34,7 @@ public class GuardRepositoryImpl implements GuardRepository {
     jdbcTemplate.update(sql, 
         guard.getDependentId(), 
         guard.getGuardianId(), 
-        guard.getDaysOfWeek().stream().map(Enum::toString).collect(Collectors.joining(",")),
+        guard.getDaysOfWeek() != null ? guard.getDaysOfWeek().stream().map(Enum::toString).collect(Collectors.joining(",")) : null,
         guard.getGuardianRole().toString()
     );
     return guard;

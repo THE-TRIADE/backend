@@ -34,18 +34,20 @@ public class ValidationService {
     }
 
     public List<Integer> validDaysOfWeekOrError(List<Integer> daysOfWeek) {
-        Long daysLesserThan1 = daysOfWeek
-            .stream()
-            .filter(day -> day < 1)
-            .count();
+        if(daysOfWeek != null) {
+            Long daysLesserThan1 = daysOfWeek
+                .stream()
+                .filter(day -> day < 1)
+                .count();
 
-        Long daysGreaterThan7 = daysOfWeek
-            .stream()
-            .filter(day -> day > 7)
-            .count();
+            Long daysGreaterThan7 = daysOfWeek
+                .stream()
+                .filter(day -> day > 7)
+                .count();
 
-        if (daysLesserThan1 > 0 || daysGreaterThan7 > 0) {
-           throw new InvalidDayException();
+            if (daysLesserThan1 > 0 || daysGreaterThan7 > 0) {
+                throw new InvalidDayException();
+            }
         }
         return daysOfWeek;
     }
