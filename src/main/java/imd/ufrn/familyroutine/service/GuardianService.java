@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import imd.ufrn.familyroutine.model.Guardian;
-import imd.ufrn.familyroutine.model.Person;
 import imd.ufrn.familyroutine.model.api.GuardianMapper;
 import imd.ufrn.familyroutine.model.api.request.LoginRequest;
 import imd.ufrn.familyroutine.model.api.response.FamilyGroupResponse;
@@ -72,13 +71,6 @@ public class GuardianService {
         
         return guardianMapper.mapGuardianToGuardianReponse(guardian, guards, familyGroups);
     }
-    
-    @Transactional
-    public Guardian createGuardianInCascade(Guardian newGuardian) {
-        Person personCreated = this.personService.createPerson(newGuardian);
-        newGuardian.setId(personCreated.getId());
-        return this.createGuardian(newGuardian);
-    }
 
     @Transactional
     public void deleteAllGuardians() {
@@ -94,11 +86,12 @@ public class GuardianService {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
-        
-        return this.guardianRepository.findByEmail(loginRequest.getUsername()).get();
+        // FIXME: Expand EntityNotFoundException to accept string
+        return this.guardianRepository.findByEmail(loginRequest.getUsername()).orElseThrow(() -> new EntityNotFoundException(0L, Guardian.class));
     }
 
-    private Guardian createGuardian(Guardian newGuardian) {
+    @Transactional
+    public Guardian createGuardian(Guardian newGuardian) {
         this.guardianValidOrError(newGuardian);
         newGuardian.setPassword(passwordEncoder.encode(newGuardian.getPassword()));
         return this.guardianRepository.save(newGuardian);

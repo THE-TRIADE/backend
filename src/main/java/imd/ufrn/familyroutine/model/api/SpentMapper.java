@@ -3,13 +3,14 @@ package imd.ufrn.familyroutine.model.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import imd.ufrn.familyroutine.model.*;
+import imd.ufrn.familyroutine.model.Dependent;
+import imd.ufrn.familyroutine.model.Guardian;
+import imd.ufrn.familyroutine.model.Spent;
 import imd.ufrn.familyroutine.model.api.request.SpentRequest;
-import imd.ufrn.familyroutine.model.api.response.ActivityResponse;
 import imd.ufrn.familyroutine.model.api.response.SpentResponse;
+import imd.ufrn.familyroutine.service.ActivityService;
 import imd.ufrn.familyroutine.service.DependentService;
 import imd.ufrn.familyroutine.service.GuardianService;
-import imd.ufrn.familyroutine.service.ActivityService;
 
 @Component
 public class SpentMapper {
@@ -24,13 +25,13 @@ public class SpentMapper {
     Spent spent = new Spent();
 
     spent.setName(spentRequest.getName());
-    spent.setValue(spentRequest.getValue());
+    spent.setAmount(spentRequest.getValue());
     spent.setPaidOn(spentRequest.getPaidOn());
-    spent.setDependentId(spentRequest.getDependentId());
-    spent.setGuardianId(spentRequest.getGuardianId());
+    spent.setDependent(dependentService.findDependentById(spentRequest.getDependentId()));
+    spent.setGuardian(guardianService.findGuardianById(spentRequest.getGuardianId()));
 
     if (spentRequest.getActivityId() != null) {
-      spent.setActivityId(spentRequest.getActivityId());
+      spent.setActivity(activityService.getActivityById(spentRequest.getActivityId()));
     }
     return spent;
   }
@@ -40,21 +41,20 @@ public class SpentMapper {
 
     spentResponse.setId(spent.getId());
     spentResponse.setName(spent.getName());
-    spentResponse.setValue(spent.getValue());
+    spentResponse.setValue(spent.getAmount());
     spentResponse.setPaidOn(spent.getPaidOn());
 
-    spentResponse.setDependentId(spent.getDependentId());
-    Dependent dependent = this.dependentService.findDependentById(spent.getDependentId());
+    spentResponse.setDependentId(spent.getDependent().getId());
+    Dependent dependent = spent.getDependent();
     spentResponse.setDependentName(dependent.getName());
 
-    spentResponse.setGuardianId(spent.getGuardianId());
-    Guardian guardian = this.guardianService.findGuardianById(spent.getGuardianId());
+    spentResponse.setGuardianId(spent.getGuardian().getId());
+    Guardian guardian = spent.getGuardian();
     spentResponse.setGuardianName(guardian.getName());
 
-    if (spent.getActivityId() != null) {
-      spentResponse.setActivityId(spent.getActivityId());
-      ActivityResponse activity = this.activityService.findActivityById(spent.getActivityId());
-      spentResponse.setActivityName(activity.getName());
+    if (spent.getActivity() != null) {
+      spentResponse.setActivityId(spent.getActivity().getId());
+      spentResponse.setActivityName(spent.getActivity().getName());
     }
 
     return spentResponse;

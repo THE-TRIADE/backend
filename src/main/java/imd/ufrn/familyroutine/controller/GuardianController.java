@@ -35,7 +35,7 @@ public class GuardianController {
 
     @PostMapping
     public Guardian createGuardian(@RequestBody Guardian newGuardian) {
-        return this.guardianService.createGuardianInCascade(newGuardian);
+        return this.guardianService.createGuardian(newGuardian);
     }
 
     @PostMapping("/login")

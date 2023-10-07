@@ -69,7 +69,7 @@ public class FamilyGroupService{
 
         for (Dependent dependent : familyGroupRequest.getDependents()) {
             dependent.setFamilyGroupId(familyGroup.getId());
-            dependent.setId(dependentService.createDependentInCascade(dependent).getId());
+            dependent.setId(dependentService.createDependent(dependent).getId());
         }
 
         for (Dependent dependent : familyGroupRequest.getDependents()) {

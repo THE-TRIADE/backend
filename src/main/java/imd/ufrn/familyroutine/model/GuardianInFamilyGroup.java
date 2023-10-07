@@ -1,6 +1,6 @@
 package imd.ufrn.familyroutine.model;
 
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
 
 public class GuardianInFamilyGroup {
     @Id

@@ -1,25 +1,12 @@
 package imd.ufrn.familyroutine.repository;
 
 import java.util.List;
-import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import imd.ufrn.familyroutine.model.Spent;
 
-public interface SpentRepository {
-
-  List<Spent> findAll();
-
-  Optional<Spent> findById(Long id);
-
-  List<Spent> findByGuardianId(Long id);
-
-  List<Spent> findByDependentId(Long id);
-
-  Spent save(Spent spent);
-
-  Spent update(Spent spent);
-
-  void deleteById(Long id);
-
-  void deleteAll();
+public interface SpentRepository extends JpaRepository<Spent, Long> {
+  List<Spent> findByGuardianId(Long guardianId);
+  List<Spent> findByDependentId(Long dependentId);
 }
