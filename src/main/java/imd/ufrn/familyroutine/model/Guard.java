@@ -3,14 +3,21 @@ package imd.ufrn.familyroutine.model;
 import java.time.DayOfWeek;
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+
+@Entity
 public class Guard {
   @Id
   private Long dependentId;
   @Id
   private Long guardianId;
+  
   private List<DayOfWeek> daysOfWeek;
+  
+  @Column(nullable = false)
   private GuardianRole guardianRole;
 
   public Guard() {

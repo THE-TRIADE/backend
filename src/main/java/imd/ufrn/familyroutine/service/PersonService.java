@@ -17,10 +17,6 @@ public class PersonService {
     @Autowired
     private PersonRepository personRepository;
 
-    public Person createPerson(Person newPerson) {
-        return this.personRepository.save(newPerson);
-    }
-
     public Person findPersonById(Long personId) {
         return this.personRepository
                    .findById(personId)
@@ -32,11 +28,11 @@ public class PersonService {
     }
     
     protected void deleteAllDependents(List<Dependent> dependents) {
-        dependents.forEach((dependent) -> this.deletePersonById(dependent.getId()));
+        dependents.forEach(dependent -> this.deletePersonById(dependent.getId()));
     }
 
     protected void deleteAllGuardians(List<Guardian> guardians) {
-        guardians.forEach((guardian) -> this.deletePersonById(guardian.getId()));
+        guardians.forEach(guardian -> this.deletePersonById(guardian.getId()));
     }
 
 }

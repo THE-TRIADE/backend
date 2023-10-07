@@ -43,7 +43,7 @@ public class SpentService {
   }
 
   public Spent updateSpent(Spent spent) {
-    return this.spentRepository.update(spent);
+    return this.spentRepository.save(spent);
   }
 
   public void deleteSpentById(Long spentId) {

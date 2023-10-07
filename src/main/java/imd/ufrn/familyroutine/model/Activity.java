@@ -3,27 +3,98 @@ package imd.ufrn.familyroutine.model;
 import java.sql.Date;
 import java.sql.Time;
 
-import org.springframework.data.annotation.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+@Entity
 public class Activity {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    private String name;
-    private String description;
-    private Date dateStart;
-    private Date dateEnd;
-    private Time hourStart;
-    private Time hourEnd;
-    private ActivityState state;
-    private String commentary;
 
-    private Long dependentId;
-    private Long currentGuardian;
-    private Long actor;
-    private Long createdBy;
-    private Long finishedBy;
-    private Long groupActivityId;
+    @Column(nullable = false)
+    private String name;
+
+    private String description;
+
+    @Column(nullable = false)
+    private Date dateStart;
+
+    @Column(nullable = false)
+    private Date dateEnd;
+
+    @Column(nullable = false)
+    private Time hourStart;
     
+    @Column(nullable = false)
+    private Time hourEnd;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ActivityState state;
+
+    private String commentary;
+    
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "dependentId")
+    @JsonIgnore
+    private Dependent dependent;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "currentGuardianId")
+    @JsonIgnore
+    private Guardian currentGuardian;
+    
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "actorId")
+    @JsonIgnore
+    private Person actor;
+    
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "createdById")
+    @JsonIgnore
+    private Guardian createdBy;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "finishedById")
+    @JsonIgnore
+    private Guardian finishedBy;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "groupActivityId")
+    @JsonIgnore
+    private GroupActivity groupActivity;
+    
+    public Activity(Long id, String name, String description, Date dateStart, Date dateEnd, Time hourStart,
+            Time hourEnd, ActivityState state, String commentary, Dependent dependent, Guardian currentGuardian,
+            Person actor, Guardian createdBy, Guardian finishedBy, GroupActivity groupActivity) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.dateStart = dateStart;
+        this.dateEnd = dateEnd;
+        this.hourStart = hourStart;
+        this.hourEnd = hourEnd;
+        this.state = state;
+        this.commentary = commentary;
+        this.dependent = dependent;
+        this.currentGuardian = currentGuardian;
+        this.actor = actor;
+        this.createdBy = createdBy;
+        this.finishedBy = finishedBy;
+        this.groupActivity = groupActivity;
+    }
+
     public Activity() {
     }
 
@@ -81,40 +152,52 @@ public class Activity {
     public void setCommentary(String commentary) {
         this.commentary = commentary;
     }
-    public Long getDependentId() {
-        return dependentId;
+
+    public Dependent getDependent() {
+        return dependent;
     }
-    public void setDependentId(Long dependentId) {
-        this.dependentId = dependentId;
+
+    public void setDependent(Dependent dependent) {
+        this.dependent = dependent;
     }
-    public Long getCurrentGuardian() {
+
+    public GroupActivity getGroupActivity() {
+        return groupActivity;
+    }
+
+    public void setGroupActivity(GroupActivity groupActivity) {
+        this.groupActivity = groupActivity;
+    }
+
+    public Guardian getCurrentGuardian() {
         return currentGuardian;
     }
-    public void setCurrentGuardian(Long currentGuardian) {
+
+    public void setCurrentGuardian(Guardian currentGuardian) {
         this.currentGuardian = currentGuardian;
     }
-    public Long getActor() {
+
+    public Person getActor() {
         return actor;
     }
-    public void setActor(Long actor) {
+
+    public void setActor(Person actor) {
         this.actor = actor;
     }
-    public Long getCreatedBy() {
+
+    public Guardian getCreatedBy() {
         return createdBy;
     }
-    public void setCreatedBy(Long createdBy) {
+
+    public void setCreatedBy(Guardian createdBy) {
         this.createdBy = createdBy;
     }
-    public Long getFinishedBy() {
+
+    public Guardian getFinishedBy() {
         return finishedBy;
     }
-    public void setFinishedBy(Long finishedBy) {
+
+    public void setFinishedBy(Guardian finishedBy) {
         this.finishedBy = finishedBy;
-    }
-    public Long getGroupActivityId() {
-        return groupActivityId;
-    }
-    public void setGroupActivityId(Long groupActivityId) {
-        this.groupActivityId = groupActivityId;
     }
 }
