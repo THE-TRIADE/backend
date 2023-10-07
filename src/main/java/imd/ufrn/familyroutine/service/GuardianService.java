@@ -69,7 +69,7 @@ public class GuardianService {
                 familyGroups.add(fg);
             });
         
-        return guardianMapper.mapGuardianToGuardianReponse(guardian, guards, familyGroups);
+        return guardianMapper.mapGuardianToGuardianResponse(guardian, guards, familyGroups);
     }
 
     @Transactional

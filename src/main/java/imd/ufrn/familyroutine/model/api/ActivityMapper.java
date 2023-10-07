@@ -1,12 +1,11 @@
 package imd.ufrn.familyroutine.model.api;
 
-import java.sql.Date;
-import java.sql.Time;
-
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import imd.ufrn.familyroutine.model.Activity;
+import imd.ufrn.familyroutine.model.Dependent;
 import imd.ufrn.familyroutine.model.Guardian;
 import imd.ufrn.familyroutine.model.Person;
 import imd.ufrn.familyroutine.model.api.request.ActivityRequest;
@@ -15,9 +14,8 @@ import imd.ufrn.familyroutine.service.DependentService;
 import imd.ufrn.familyroutine.service.GuardianService;
 import imd.ufrn.familyroutine.service.PersonService;
 
-@Component
-public class ActivityMapper {
-
+@Mapper(componentModel = "spring", uses = { UtilsMapper.class })
+public abstract class ActivityMapper {
     @Autowired
     private GuardianService guardianService;
     @Autowired
@@ -26,55 +24,37 @@ public class ActivityMapper {
     private PersonService personService;
 
     public Activity mapActivityRequestToActivity(ActivityRequest activityRequest) {
-        Activity activity = new Activity();
-        activity.setName(activityRequest.getName());
-        activity.setDateStart(Date.valueOf(activityRequest.getDateStart()));
-        activity.setDateEnd(Date.valueOf(activityRequest.getDateEnd()));
-        activity.setHourStart(Time.valueOf(activityRequest.getHourStart()));
-        activity.setHourEnd(Time.valueOf(activityRequest.getHourEnd()));
-        activity.setDependent(dependentService.findDependentById(activityRequest.getDependentId()));
-        activity.setCurrentGuardian(guardianService.findGuardianById(activityRequest.getCurrentGuardian()));
-        activity.setActor(personService.findPersonById(activityRequest.getActor()));
-        activity.setCreatedBy(guardianService.findGuardianById(activityRequest.getCreatedBy()));
-        activity.setState(activityRequest.getState());
-        return activity;
+        Guardian createdBy = this.guardianService.findGuardianById(activityRequest.getCreatedBy());
+        Guardian currentGuardian = this.guardianService.findGuardianById(activityRequest.getCurrentGuardian());
+        Person actor = this.personService.findPersonById(activityRequest.getActor());
+        Dependent dependent = this.dependentService.findDependentById(activityRequest.getDependentId());
+        return this.mapActivityRequestToActivity(activityRequest, createdBy, currentGuardian, actor, dependent);
     }
 
-    public ActivityResponse mapActivityToActivityResponse(Activity activity) {
-        ActivityResponse activityResponse = new ActivityResponse();
-        activityResponse.setId(activity.getId());
-        activityResponse.setName(activity.getName());
-        activityResponse.setState(activity.getState());
-        activityResponse.setDateStart(activity.getDateStart());
-        activityResponse.setDateEnd(activity.getDateEnd());
-        activityResponse.setHourStart(activity.getHourStart());
-        activityResponse.setHourEnd(activity.getHourEnd());
-        activityResponse.setDependentId(activity.getDependent().getId());
-        Person dependent = this.personService.findPersonById(activity.getDependent().getId());
-        activityResponse.setDependentName(dependent.getName());
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "commentary", ignore = true)
+    @Mapping(target = "finishedBy", ignore = true)
+    @Mapping(target = "groupActivity", ignore = true)
+    @Mapping(target = "name", source = "activityRequest.name")
+    @Mapping(target = "createdBy", source = "createdBy")
+    @Mapping(target = "currentGuardian", source = "currentGuardian")
+    @Mapping(target = "actor", source = "actor")
+    protected abstract Activity mapActivityRequestToActivity(ActivityRequest activityRequest, Guardian createdBy, Guardian currentGuardian, Person actor, Dependent dependent);
 
-        activityResponse.setCurrentGuardianId(activity.getCurrentGuardian().getId());
-        Guardian currentGuardian = this.guardianService.findGuardianById(activity.getCurrentGuardian().getId());
-        activityResponse.setCurrentGuardianEmail(currentGuardian.getEmail());
-        activityResponse.setCurrentGuardianName(currentGuardian.getName());
-        
-        activityResponse.setActorId(activity.getActor().getId());
-        Person actor = this.personService.findPersonById(activity.getActor().getId());
-        activityResponse.setActorName(actor.getName());
-
-        activityResponse.setCreatedById(activity.getCreatedBy().getId());
-        Guardian createdByGuardian = this.guardianService.findGuardianById(activity.getCreatedBy().getId());
-        activityResponse.setCreatedByEmail(createdByGuardian.getEmail());
-        activityResponse.setCreatedByName(createdByGuardian.getName());
-        activityResponse.setGroupActivityId(activity.getGroupActivity().getId());
-
-        if(activity.getCommentary() != null) {
-            activityResponse.setCommentary(activity.getCommentary());
-        }
-        if(activity.getFinishedBy() != null) {
-            activityResponse.setFinishedById(activity.getFinishedBy().getId());
-        }
-
-        return activityResponse;
-    }
+    @Mapping(target = "id", source = "activity.id")
+    @Mapping(target = "groupActivityId", source = "activity.groupActivity.id")
+    @Mapping(target = "name", source = "activity.name")
+    @Mapping(target = "actorId", source = "activity.actor.id")
+    @Mapping(target = "actorName", source = "activity.actor.name")
+    @Mapping(target = "dependentId", source = "activity.dependent.id")
+    @Mapping(target = "dependentName", source = "activity.dependent.name")
+    @Mapping(target = "finishedById", source = "activity.finishedBy.id")
+    @Mapping(target = "finishedByName", source = "activity.finishedBy.name")
+    @Mapping(target = "createdById", source = "activity.createdBy.id")
+    @Mapping(target = "createdByName", source = "activity.createdBy.name")
+    @Mapping(target = "createdByEmail", source = "activity.createdBy.email")
+    @Mapping(target = "currentGuardianId", source = "activity.currentGuardian.id")
+    @Mapping(target = "currentGuardianName", source = "activity.currentGuardian.name")
+    @Mapping(target = "currentGuardianEmail", source = "activity.currentGuardian.email")
+    public abstract ActivityResponse mapActivityToActivityResponse(Activity activity);
 }
