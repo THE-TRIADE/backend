@@ -3,32 +3,49 @@ package imd.ufrn.familyroutine.model;
 import java.time.DayOfWeek;
 import java.util.List;
 
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import imd.ufrn.familyroutine.model.id.GuardId;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 
 @Entity
+@IdClass(GuardId.class)
 public class Guard {
+
   @Id
-  private Long dependentId;
+  @ManyToOne(fetch = FetchType.EAGER, optional = false)
+  @JoinColumn(name = "dependentId")
+  @JsonIgnore
+  private Dependent dependent;
+  
   @Id
-  private Long guardianId;
+  @ManyToOne(fetch = FetchType.EAGER, optional = false)
+  @JoinColumn(name = "guardianId")
+  @JsonIgnore
+  private Guardian guardian;
   
   private List<DayOfWeek> daysOfWeek;
   
   @Column(nullable = false)
   private GuardianRole guardianRole;
 
+  public Guard(Dependent dependent, Guardian guardian, List<DayOfWeek> daysOfWeek, GuardianRole guardianRole) {
+    this.dependent = dependent;
+    this.guardian = guardian;
+    this.daysOfWeek = daysOfWeek;
+    this.guardianRole = guardianRole;
+  }
+
+
   public Guard() {
   }
 
-  public Guard(Long dependentId, Long guardianId, List<DayOfWeek> daysOfWeek, GuardianRole guardianRole) {
-    this.daysOfWeek = daysOfWeek;
-    this.guardianRole = guardianRole;
-    this.dependentId = dependentId;
-    this.guardianId = guardianId;
-  }
 
   public List<DayOfWeek> getDaysOfWeek() {
     return daysOfWeek;
@@ -46,19 +63,23 @@ public class Guard {
     this.guardianRole = role;
   }
 
-  public Long getDependentId() {
-    return dependentId;
+
+  public Dependent getDependent() {
+    return dependent;
   }
 
-  public void setDependentId(Long dependentId) {
-    this.dependentId = dependentId;
+
+  public void setDependent(Dependent dependent) {
+    this.dependent = dependent;
   }
 
-  public Long getGuardianId() {
-    return guardianId;
+
+  public Guardian getGuardian() {
+    return guardian;
   }
 
-  public void setGuardianId(Long guardianId) {
-    this.guardianId = guardianId;
+
+  public void setGuardian(Guardian guardian) {
+    this.guardian = guardian;
   }
 }

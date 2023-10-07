@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import imd.ufrn.familyroutine.model.*;
+import imd.ufrn.familyroutine.model.Dependent;
+import imd.ufrn.familyroutine.model.Guard;
+import imd.ufrn.familyroutine.model.Guardian;
 import imd.ufrn.familyroutine.model.api.request.GuardRequest;
 import imd.ufrn.familyroutine.model.api.response.GuardResponse;
 import imd.ufrn.familyroutine.service.DependentService;
@@ -41,8 +43,8 @@ public class GuardMapper {
     }
 
     guard.setGuardianRole(guardRequest.getGuardianRole());
-    guard.setDependentId(guardRequest.getDependentId());
-    guard.setGuardianId(guardRequest.getGuardianId());
+    guard.setDependent(dependentService.findDependentById(guardRequest.getDependentId()));
+    guard.setGuardian(guardianService.findGuardianById(guardRequest.getGuardianId()));
 
     return guard;
   }
@@ -53,19 +55,19 @@ public class GuardMapper {
     if (guard.getDaysOfWeek() != null) {
       List<Integer> daysInt = guard.getDaysOfWeek()
           .stream()
-          .map(day -> day.getValue())
+          .map(DayOfWeek::getValue)
           .toList();
 
       guardResponse.setDaysOfWeek(daysInt);
     }
     guardResponse.setGuardianRole(guard.getGuardianRole());
 
-    guardResponse.setDependentId(guard.getDependentId());
-    Dependent dependent = this.dependentService.findDependentById(guard.getDependentId());
+    guardResponse.setDependentId(guard.getDependent().getId());
+    Dependent dependent =  guard.getDependent();
     guardResponse.setDependentName(dependent.getName());
 
-    guardResponse.setGuardianId(guard.getGuardianId());
-    Guardian guardian = this.guardianService.findGuardianById(guard.getGuardianId());
+    guardResponse.setGuardianId(guard.getGuardian().getId());
+    Guardian guardian = guard.getGuardian();
     guardResponse.setGuardianName(guardian.getName());
     guardResponse.setGuardianEmail(guardian.getEmail());
 
