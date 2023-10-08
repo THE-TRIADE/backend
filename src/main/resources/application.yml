@@ -7,13 +7,14 @@ spring:
       fail-on-unknown-properties: true
   jpa:
     database: H2
+    open-in-view: true
     show-sql: true
     properties:
       hibernate:
-        format_sql: true
+        '[format_sql]': true
     hibernate:
       ddl-auto: update
-  # fix me: naming shall be removed. Only added so the database is able to use camel case names
+      # FIXME: naming shall be removed. Only added so the database is able to use camel case names
       naming: 
         physical-strategy: 
           org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
