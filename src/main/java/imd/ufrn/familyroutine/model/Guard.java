@@ -13,9 +13,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @IdClass(GuardId.class)
+@Table(name = "guard")
 public class Guard {
 
   @Id

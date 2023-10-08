@@ -18,9 +18,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
+@Table(name = "guardian")
 public class Guardian extends Person implements UserDetails {
 
     @Column(nullable = false, unique = true)
