@@ -9,12 +9,22 @@ spring:
     database: H2
     open-in-view: true
     show-sql: true
+    defer-datasource-initialization:
+      true
     properties:
+      # save in create.sql the code generated from jpa to create the database  
+      # javax:
+      #   persistence:
+      #     schema-generation: 
+      #       scripts:
+      #         create-source: metadata
+      #         action: create
+      #         create-target: create.sql
       hibernate:
         '[format_sql]': true
     hibernate:
-      ddl-auto: update
-      # FIXME: naming shall be removed. Only added so the database is able to use camel case names
+      ddl-auto: create
+      # Add camel case to the database
       naming: 
         physical-strategy: 
           org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
