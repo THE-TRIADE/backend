@@ -21,10 +21,16 @@ public abstract class UtilsMapper {
     }
 
     public List<DayOfWeek> listIntegerToListDayOfWeek(List<Integer> daysOfWeek) {
-        return daysOfWeek.stream().map(dayNum -> DayOfWeek.of(dayNum)).toList();
+        if(daysOfWeek == null){
+            return null;
+        }
+        return daysOfWeek.stream().map(DayOfWeek::of).toList();
     }
 
     public List<Integer> listDayOfWeekToListInteger(List<DayOfWeek> daysOfWeek) {
-        return daysOfWeek.stream().map(day -> day.getValue()).toList();
+        if(daysOfWeek == null){
+            return null;
+        }
+        return daysOfWeek.stream().map(DayOfWeek::getValue).toList();
     }
 }

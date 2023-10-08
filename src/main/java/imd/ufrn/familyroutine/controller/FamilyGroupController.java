@@ -36,7 +36,7 @@ public class FamilyGroupController {
 
     @PostMapping
     public FamilyGroupResponse createFamilyGroup(@RequestBody FamilyGroupRequest newFamilyGroup) {
-        return this.familyGroupService.createFamilyGroup(newFamilyGroup);
+        return this.familyGroupService.createFamilyGroupWithGuardianAndDependents(newFamilyGroup);
     }
 
     @DeleteMapping("{familyGroupId}")
