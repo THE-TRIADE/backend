@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import imd.ufrn.familyroutine.model.Dependent;
 import imd.ufrn.familyroutine.model.FamilyGroup;
-import imd.ufrn.familyroutine.model.GuardianInFamilyGroup;
+import imd.ufrn.familyroutine.model.Guard;
+import imd.ufrn.familyroutine.model.Guardian;
 import imd.ufrn.familyroutine.model.api.FamilyGroupMapper;
 import imd.ufrn.familyroutine.model.api.request.FamilyGroupRequest;
-import imd.ufrn.familyroutine.model.api.request.GuardRequest;
 import imd.ufrn.familyroutine.model.api.response.FamilyGroupResponse;
 import imd.ufrn.familyroutine.repository.FamilyGroupRepository;
 import imd.ufrn.familyroutine.service.exception.EntityNotFoundException;
@@ -25,17 +25,14 @@ public class FamilyGroupService{
     @Autowired
     private GuardService guardService;
     @Autowired
-    private GuardianInFamilyGroupService guardianInFamilyGroupService;
-    @Autowired
     private FamilyGroupMapper familyGroupMapper;
 
     public List<FamilyGroupResponse> findFamilyGroupsByGuardianId(Long guardianId) {
         return
-        this.guardianInFamilyGroupService
-            .findGuardianInFamilyGroupsByGuardianId(guardianId)
+        this.familyGroupRepository
+            .findFamilyGroupByGuardiansId(guardianId)
             .stream()
-            .map(GuardianInFamilyGroup::getFamilyGroupId)
-            .map(this::findFamilyGroupById)
+            .map(familyGroupMapper::mapFamilyGroupToFamilyGroupResponse)
             .toList();
     }
 
@@ -61,37 +58,39 @@ public class FamilyGroupService{
     }
     
     @Transactional
-    public FamilyGroupResponse createFamilyGroup(FamilyGroupRequest familyGroupRequest) {
+    public FamilyGroupResponse createFamilyGroupWithGuardianAndDependents(FamilyGroupRequest familyGroupRequest) {
+      //FIXME: verificar se o guardian eh criado automaticamente ou eh necessario ser explicito
         FamilyGroup familyGroup = this.familyGroupRepository.save(familyGroupMapper.mapFamilyGroupRequestToFamilyGroup(familyGroupRequest));
         
-        GuardianInFamilyGroup guardianInFamilyGroup = new GuardianInFamilyGroup(familyGroupRequest.getGuardianId(), familyGroup.getId());
-        this.guardianInFamilyGroupService.createGuardianInFamilyGroup(guardianInFamilyGroup);
+        Guardian guardian = familyGroup.getGuardians().iterator().next();
 
-        for (Dependent dependent : familyGroupRequest.getDependents()) {
-            dependent.setFamilyGroupId(familyGroup.getId());
-            dependent.setId(dependentService.createDependentInCascade(dependent).getId());
-        }
-
-        for (Dependent dependent : familyGroupRequest.getDependents()) {
-            GuardRequest newGuard = new GuardRequest();
-            newGuard.setDependentId(dependent.getId());
-            newGuard.setGuardianId(familyGroupRequest.getGuardianId());
-            newGuard.setGuardianRole(familyGroupRequest.getGuardianRole());
-            this.guardService.createGuard(newGuard);
-        }
+        familyGroupRequest.getDependents().forEach(dependent -> {
+            dependent.setFamilyGroup(familyGroup);
+            dependent.setId(dependentService.createDependent(dependent).getId());
+           
+            createNewGuard(familyGroupRequest, guardian, dependent);
+        });
 
         return this.familyGroupMapper.mapFamilyGroupToFamilyGroupResponse(familyGroup);
     }
 
+    private void createNewGuard(FamilyGroupRequest familyGroupRequest, Guardian guardian, Dependent dependent) {
+        Guard newGuard = new Guard();
+        newGuard.setDependent(dependent);
+        newGuard.setGuardian(guardian);
+        newGuard.setGuardianRole(familyGroupRequest.getGuardianRole());
+        this.guardService.createGuard(newGuard);
+    }
+
     public List<Dependent> getFamilyGroupDependentsByFamilyGroupId(Long familyGroupId){
-        return familyGroupRepository.findDependentsByFamilyGroupId(familyGroupId);
+        return dependentService.findDependentsByFamilyGroupId(familyGroupId);
     }
 
     public FamilyGroupResponse findByDependentId(Long dependentId) {
         return this.familyGroupMapper
             .mapFamilyGroupToFamilyGroupResponse(
-                this.familyGroupRepository
-                    .findByDependentId(dependentId)
+                this.dependentService
+                    .findFamilyGroupByDependentId(dependentId)
                     .orElseThrow(
                         () -> new EntityNotFoundException(dependentId, Dependent.class)
                     )

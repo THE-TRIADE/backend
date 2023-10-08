@@ -116,7 +116,7 @@ public class ActivityBatchScheduler  {
     }
 
     public BeanPropertyItemSqlParameterSourceProvider<Activity> parameterSourceProvider () {
-        return new BeanPropertyItemSqlParameterSourceProvider<>() {
+        return new BeanPropertyItemSqlParameterSourceProvider<Activity>() {
 
             @Override
             public SqlParameterSource createSqlParameterSource(Activity item) {

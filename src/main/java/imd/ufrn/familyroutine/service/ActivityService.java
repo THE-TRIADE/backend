@@ -24,9 +24,9 @@ import imd.ufrn.familyroutine.model.api.request.FinishActivityRequest;
 import imd.ufrn.familyroutine.model.api.response.ActivityResponse;
 import imd.ufrn.familyroutine.repository.ActivityRepository;
 import imd.ufrn.familyroutine.service.exception.EntityNotFoundException;
-import imd.ufrn.familyroutine.service.exception.InvalidStateException;
 import imd.ufrn.familyroutine.service.exception.GroupActivityException;
 import imd.ufrn.familyroutine.service.exception.GroupActivityType;
+import imd.ufrn.familyroutine.service.exception.InvalidStateException;
 
 @Service
 public class ActivityService {
@@ -36,6 +36,12 @@ public class ActivityService {
     private GroupActivityService groupActivityService;
     @Autowired
     private ValidationService validationService;
+    @Autowired
+    private DependentService dependentService;
+    @Autowired
+    private GuardianService guardianService;
+    @Autowired
+    private PersonService personService;
     @Autowired
     private ActivityMapper activityMapper;
 
@@ -51,7 +57,7 @@ public class ActivityService {
         return this.activityRepository
                     .findAll()
                     .stream()
-                    .filter(activity -> activity.getDependentId().equals(dependentId))
+                    .filter(activity -> activity.getDependent().getId().equals(dependentId))
                     .map(this.activityMapper::mapActivityToActivityResponse)
                     .toList();
     }
@@ -73,9 +79,9 @@ public class ActivityService {
     public ActivityResponse finishActivity(Long activityId, FinishActivityRequest finishActivityRequest) {
         Activity activity = this.getActivityById(activityId);
         this.checkActivityIsNotInStateDoneOrNotDoneOrError(activity);
-        Function<Boolean,ActivityState> defineFinishState = done -> done == true ? ActivityState.DONE : ActivityState.NOT_DONE;
+        Function<Boolean,ActivityState> defineFinishState = done -> done ? ActivityState.DONE : ActivityState.NOT_DONE;
         activity.setState(defineFinishState.apply(finishActivityRequest.getDone()));
-        activity.setFinishedBy(finishActivityRequest.getGuardianId());
+        activity.setFinishedBy(guardianService.findGuardianById(finishActivityRequest.getGuardianId() ));
         activity.setCommentary(finishActivityRequest.getCommentary());
         return this.activityMapper.mapActivityToActivityResponse(this.updateActivity(activity));
     }
@@ -104,10 +110,10 @@ public class ActivityService {
     }
 
     private Activity updateActivity(Activity activity) {
-        return this.activityRepository.update(activity);
+        return this.activityRepository.save(activity);
     }
 
-    private Activity getActivityById(Long activityId) {
+    public Activity getActivityById(Long activityId) {
         return this.activityRepository.findById(activityId).orElseThrow(() -> new EntityNotFoundException(activityId, Activity.class));
     }
 
@@ -141,10 +147,10 @@ public class ActivityService {
             newActivity.setDateEnd(Date.valueOf(currentDate.plusHours(diffInHours).toLocalDate()));
             newActivity.setHourStart(Time.valueOf(activityRequest.getHourStart()));
             newActivity.setHourEnd(Time.valueOf(activityRequest.getHourEnd()));
-            newActivity.setDependentId(activityRequest.getDependentId());
-            newActivity.setCurrentGuardian(activityRequest.getCurrentGuardian());
-            newActivity.setActor(activityRequest.getActor());
-            newActivity.setCreatedBy(activityRequest.getCreatedBy());
+            newActivity.setDependent(dependentService.findDependentById(activityRequest.getDependentId()));
+            newActivity.setCurrentGuardian(guardianService.findGuardianById(activityRequest.getCurrentGuardian()));
+            newActivity.setActor(personService.findPersonById(activityRequest.getActor()));
+            newActivity.setCreatedBy(guardianService.findGuardianById(activityRequest.getCreatedBy()));
             newActivity.setState(activityRequest.getState());
 
             activities.add(newActivity);
@@ -155,7 +161,7 @@ public class ActivityService {
         }
 
         GroupActivity groupActivity = this.groupActivityService.createGroupActivity(new GroupActivity());
-        activities.forEach(activity -> activity.setGroupActivityId(groupActivity.getId()));
+        activities.forEach(activity -> activity.setGroupActivity(groupActivityService.findGroupActivityById((groupActivity.getId()))));
 
         return this.createMultipleActivities(activities).get(0);
 	}

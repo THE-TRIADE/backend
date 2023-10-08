@@ -2,30 +2,59 @@ package imd.ufrn.familyroutine.model;
 
 import java.sql.Date;
 
-import org.springframework.data.annotation.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+@Entity
 public class Spent {
   @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
+
+  @Column(nullable = false)
   private String name;
-  private Integer value;
+
+  @Column(nullable = false)
+  private Integer amount;
+
+  @Column(nullable = false)
   private Date paidOn;
 
-  private Long activityId;
-  private Long dependentId;
-  private Long guardianId;
+  @ManyToOne(fetch = FetchType.EAGER, optional = true)
+  @JoinColumn(name = "activityId")
+  @JsonIgnore
+  private Activity activity;
 
-  public Spent() {
-  }
+  @ManyToOne(fetch = FetchType.EAGER, optional = true)
+  @JoinColumn(name = "dependentId")
+  @JsonIgnore
+  private Dependent dependent;
 
-  public Spent(Long id, String name, Integer value, Date paidOn, Long activityId, Long dependentId, Long guardianId) {
+  @ManyToOne(fetch = FetchType.EAGER, optional = true)
+  @JoinColumn(name = "guardianId")
+  @JsonIgnore
+  private Guardian guardian;
+
+  public Spent(Long id, String name, Integer amount, Date paidOn, Activity activity, Dependent dependent,
+      Guardian guardian) {
     this.id = id;
     this.name = name;
-    this.value = value;
+    this.amount = amount;
     this.paidOn = paidOn;
-    this.activityId = activityId;
-    this.dependentId = dependentId;
-    this.guardianId = guardianId;
+    this.activity = activity;
+    this.dependent = dependent;
+    this.guardian = guardian;
+  }
+
+  public Spent() {
   }
 
   public Long getId() {
@@ -44,12 +73,12 @@ public class Spent {
     this.name = name;
   }
 
-  public Integer getValue() {
-    return value;
+  public Integer getAmount() {
+    return amount;
   }
 
-  public void setValue(Integer value) {
-    this.value = value;
+  public void setAmount(Integer value) {
+    this.amount = value;
   }
 
   public Date getPaidOn() {
@@ -59,29 +88,29 @@ public class Spent {
   public void setPaidOn(Date paidOn) {
     this.paidOn = paidOn;
   }
-
-  public Long getActivityId() {
-    return activityId;
+  
+  public Activity getActivity() {
+    return activity;
   }
 
-  public void setActivityId(Long activityId) {
-    this.activityId = activityId;
+  public void setActivity(Activity activity) {
+    this.activity = activity;
   }
 
-  public Long getDependentId() {
-    return dependentId;
+  public Dependent getDependent() {
+    return dependent;
   }
 
-  public void setDependentId(Long dependentId) {
-    this.dependentId = dependentId;
+  public void setDependent(Dependent dependent) {
+    this.dependent = dependent;
   }
 
-  public Long getGuardianId() {
-    return guardianId;
+  public Guardian getGuardian() {
+    return guardian;
   }
 
-  public void setGuardianId(Long guardianId) {
-    this.guardianId = guardianId;
+  public void setGuardian(Guardian guardian) {
+    this.guardian = guardian;
   }
 
 }

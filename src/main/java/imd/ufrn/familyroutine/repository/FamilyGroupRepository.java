@@ -2,26 +2,12 @@ package imd.ufrn.familyroutine.repository;
 
 
 import java.util.List;
-import java.util.Optional;
 
-import imd.ufrn.familyroutine.model.Dependent;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import imd.ufrn.familyroutine.model.FamilyGroup;
 
-public interface FamilyGroupRepository {
+public interface FamilyGroupRepository extends JpaRepository<FamilyGroup, Long>{
 
-  List<FamilyGroup> findAll();
-
-  Optional<FamilyGroup> findById(Long id);
-
-  FamilyGroup save(FamilyGroup familyGroup);
-
-  void deleteById(Long id);
-
-  void deleteAll();
-
-  List<Dependent> findDependentsByFamilyGroupId(Long familyGroupId);
-
-  Optional<FamilyGroup> findByDependentId(Long dependentId);
-
+  List<FamilyGroup> findFamilyGroupByGuardiansId(Long guardianId);
 }

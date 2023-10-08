@@ -1,74 +1,38 @@
 package imd.ufrn.familyroutine.model.api;
 
-import java.time.DayOfWeek;
-import java.util.List;
-
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
-import imd.ufrn.familyroutine.model.*;
+import imd.ufrn.familyroutine.model.Dependent;
+import imd.ufrn.familyroutine.model.Guard;
+import imd.ufrn.familyroutine.model.Guardian;
 import imd.ufrn.familyroutine.model.api.request.GuardRequest;
 import imd.ufrn.familyroutine.model.api.response.GuardResponse;
 import imd.ufrn.familyroutine.service.DependentService;
 import imd.ufrn.familyroutine.service.GuardianService;
-import imd.ufrn.familyroutine.service.exception.InvalidDayException;
 
-@Component
-public class GuardMapper {
+@Mapper(componentModel = "spring", uses = { UtilsMapper.class })
+public abstract class GuardMapper {
   @Lazy
   @Autowired
   private GuardianService guardianService;
   @Autowired
   private DependentService dependentService;
 
-  public Guard mapGuardRequestToGuard(GuardRequest guardRequest) {
-    Guard guard = new Guard();
-
-    if (guardRequest.getDaysOfWeek() != null) {
-      List<DayOfWeek> days = guardRequest.getDaysOfWeek()
-          .stream()
-          .map(intValue -> {
-            try {
-              return DayOfWeek.of(intValue);
-            } catch (Exception e) {
-              throw new InvalidDayException();
-            }
-          })
-          .toList();
-
-      guard.setDaysOfWeek(days);
-    }
-
-    guard.setGuardianRole(guardRequest.getGuardianRole());
-    guard.setDependentId(guardRequest.getDependentId());
-    guard.setGuardianId(guardRequest.getGuardianId());
-
-    return guard;
+  public Guard mapGuardRequestToGuard (GuardRequest guardRequest) {
+    Guardian guardian = this.guardianService.findGuardianById(guardRequest.getGuardianId());
+    Dependent dependent = this.dependentService.findDependentById(guardRequest.getDependentId());
+    return this.mapGuardRequestToGuard(guardRequest, guardian, dependent);
   }
 
-  public GuardResponse mapGuardToGuardResponse(Guard guard) {
-    GuardResponse guardResponse = new GuardResponse();
+  public abstract Guard mapGuardRequestToGuard(GuardRequest guardRequest, Guardian guardian, Dependent dependent);
 
-    if (guard.getDaysOfWeek() != null) {
-      List<Integer> daysInt = guard.getDaysOfWeek()
-          .stream()
-          .map(day -> day.getValue())
-          .toList();
-
-      guardResponse.setDaysOfWeek(daysInt);
-    }
-    guardResponse.setGuardianRole(guard.getGuardianRole());
-
-    guardResponse.setDependentId(guard.getDependentId());
-    Dependent dependent = this.dependentService.findDependentById(guard.getDependentId());
-    guardResponse.setDependentName(dependent.getName());
-
-    guardResponse.setGuardianId(guard.getGuardianId());
-    Guardian guardian = this.guardianService.findGuardianById(guard.getGuardianId());
-    guardResponse.setGuardianName(guardian.getName());
-    guardResponse.setGuardianEmail(guardian.getEmail());
-
-    return guardResponse;
-  }
+  @Mapping(target = "dependentId", source = "guard.dependent.id")
+  @Mapping(target = "dependentName", source = "guard.dependent.name")
+  @Mapping(target = "guardianId", source = "guard.guardian.id")
+  @Mapping(target = "guardianName", source = "guard.guardian.name")
+  @Mapping(target = "guardianEmail", source = "guard.guardian.email")
+  public abstract GuardResponse mapGuardToGuardResponse(Guard guard);
 }

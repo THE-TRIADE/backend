@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import imd.ufrn.familyroutine.model.Guard;
 import imd.ufrn.familyroutine.model.api.GuardMapper;
+import imd.ufrn.familyroutine.model.api.UtilsMapper;
 import imd.ufrn.familyroutine.model.api.request.GuardRequest;
 import imd.ufrn.familyroutine.model.api.response.GuardResponse;
 import imd.ufrn.familyroutine.repository.GuardRepository;
@@ -19,6 +20,8 @@ public class GuardService {
   private GuardMapper guardMapper;
   @Autowired
   private ValidationService validationService;
+  @Autowired
+  private UtilsMapper utilsMapper;
 
   public List<GuardResponse> findGuardsByGuardianId(Long guardianId) {
     return this.guardRepository.findByGuardianId(guardianId).stream().map(guardMapper::mapGuardToGuardResponse)
@@ -34,6 +37,12 @@ public class GuardService {
     this.validationService.validDaysOfWeekOrError(newGuard.getDaysOfWeek());
     Guard guard = this.guardMapper.mapGuardRequestToGuard(newGuard);
     return this.guardMapper.mapGuardToGuardResponse(this.guardRepository.save(guard));
+  }
+
+  public GuardResponse createGuard(Guard newGuard) {
+    this.validationService.validDaysOfWeekOrError(utilsMapper.listDayOfWeekToListInteger(newGuard.getDaysOfWeek()));
+    
+    return this.guardMapper.mapGuardToGuardResponse(this.guardRepository.save(newGuard));
   }
 
   public void deleteGuardsByGuardianIdAndDependentId(Long guardianId, Long dependentId) {
