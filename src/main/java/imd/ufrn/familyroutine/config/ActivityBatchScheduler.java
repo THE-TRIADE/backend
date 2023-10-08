@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -18,10 +16,9 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
-import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
+import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +29,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import imd.ufrn.familyroutine.model.Activity;
-import imd.ufrn.familyroutine.repository.mappers.ActivityMapper;
+import imd.ufrn.familyroutine.repository.ActivityRepository;
+import jakarta.persistence.EntityManagerFactory;
 
 @Configuration
 @EnableScheduling
@@ -48,7 +46,9 @@ public class ActivityBatchScheduler  {
     @Autowired
     private PlatformTransactionManager transactionManager;
     @Autowired
-    private DataSource dataSource;
+    private ActivityRepository activityRepository;
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
     @Scheduled(fixedRate = 60000, initialDelay = 40000)
     public void launchJob() throws Exception {
@@ -80,9 +80,9 @@ public class ActivityBatchScheduler  {
     protected Step checkActivityState(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("checkActivityState", jobRepository)
                 .<Activity,Activity> chunk(5, transactionManager)
-                .reader(reader(dataSource))
+                .reader(reader())
                 .processor(processor())
-                .writer(writer(dataSource))
+                .writer(writer())
                 .build();
     }
 
@@ -91,13 +91,11 @@ public class ActivityBatchScheduler  {
     }
 
     @Bean
-    public ItemReader<Activity> reader(DataSource dataSource) {
-        return new JdbcCursorItemReaderBuilder<Activity>()
+    public ItemReader<Activity> reader() {
+        return new JpaCursorItemReaderBuilder<Activity>()
             .name("activityItemReader")
-            .verifyCursorPosition(false)
-            .dataSource(dataSource)
-            .sql("SELECT * FROM ACTIVITY")
-            .rowMapper(new ActivityMapper())
+            .queryString("SELECT a FROM Activity a") // This is in JPQL, not SQL
+            .entityManagerFactory(entityManagerFactory)
             .build();
     }
 
@@ -107,12 +105,10 @@ public class ActivityBatchScheduler  {
     }
 
     @Bean
-    public JdbcBatchItemWriter<Activity> writer(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<Activity>()
-          .itemSqlParameterSourceProvider(parameterSourceProvider())
-          .sql("UPDATE `activity` SET `state` = :state WHERE id = :id")
-          .dataSource(dataSource)
-          .build();
+    public ItemWriter<Activity> writer() {
+        return activities -> {
+            activityRepository.saveAll(activities);
+        };
     }
 
     public BeanPropertyItemSqlParameterSourceProvider<Activity> parameterSourceProvider () {
