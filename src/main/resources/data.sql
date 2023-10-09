@@ -29,7 +29,7 @@ INSERT INTO "family-group" (`id`, `name`) VALUES
 
 INSERT INTO dependent (`id`, familyGroupId) VALUES
     (2, 1),
-    (4, 3),
+    (5, 3),
     (6, 2);
 
 -- INSERT INTO guard (daysOfWeek, guardianRole, guardianId, dependentId)
