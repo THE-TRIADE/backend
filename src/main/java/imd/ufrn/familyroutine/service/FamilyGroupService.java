@@ -1,6 +1,7 @@
 package imd.ufrn.familyroutine.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,13 +88,23 @@ public class FamilyGroupService{
     }
 
     public FamilyGroupResponse findByDependentId(Long dependentId) {
-        return this.familyGroupMapper
-            .mapFamilyGroupToFamilyGroupResponse(
-                this.dependentService
-                    .findFamilyGroupByDependentId(dependentId)
-                    .orElseThrow(
-                        () -> new EntityNotFoundException(dependentId, Dependent.class)
-                    )
+        return this.familyGroupMapper.mapFamilyGroupToFamilyGroupResponse(this.findFamilyGroupByDependentId(dependentId));
+    }
+
+    protected FamilyGroup findFamilyGroupByDependentId(Long dependentId) {
+        return 
+        this.dependentService
+            .findFamilyGroupByDependentId(dependentId)
+            .orElseThrow(
+                () -> new EntityNotFoundException(dependentId, Dependent.class)
             );
+    }
+
+    protected FamilyGroup addGuardianInFamilyGroup(Guardian guardian, Long familyGroupId) {
+        FamilyGroup familyGroup = this.familyGroupRepository.findById(familyGroupId).get();
+        Set<Guardian> guardians = familyGroup.getGuardians();
+        guardians.add(guardian);
+        familyGroup.setGuardians(guardians);
+        return this.familyGroupRepository.save(familyGroup);
     }
 }
