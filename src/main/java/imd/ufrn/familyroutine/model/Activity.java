@@ -3,6 +3,9 @@ package imd.ufrn.familyroutine.model;
 import java.sql.Date;
 import java.sql.Time;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -50,31 +53,37 @@ public class Activity {
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "dependentId")
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Dependent dependent;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "currentGuardianId")
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Guardian currentGuardian;
     
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "actorId")
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Person actor;
     
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "createdById")
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Guardian createdBy;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "finishedById")
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Guardian finishedBy;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "groupActivityId")
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private GroupActivity groupActivity;
     
     public Activity(Long id, String name, String description, Date dateStart, Date dateEnd, Time hourStart,

@@ -23,7 +23,7 @@ public abstract class GuardMapper {
 
   public Guard mapGuardRequestToGuard (GuardRequest guardRequest) {
     Guardian guardian = this.guardianService.findGuardianById(guardRequest.getGuardianId());
-    Dependent dependent = this.dependentService.findDependentById(guardRequest.getDependentId());
+    Dependent dependent = this.dependentService.findDependentModelById(guardRequest.getDependentId());
     return this.mapGuardRequestToGuard(guardRequest, guardian, dependent);
   }
 

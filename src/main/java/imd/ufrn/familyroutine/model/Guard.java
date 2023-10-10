@@ -3,6 +3,9 @@ package imd.ufrn.familyroutine.model;
 import java.time.DayOfWeek;
 import java.util.List;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import imd.ufrn.familyroutine.model.id.GuardId;
@@ -24,12 +27,14 @@ public class Guard {
   @ManyToOne(fetch = FetchType.EAGER, optional = false)
   @JoinColumn(name = "dependentId")
   @JsonIgnore
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Dependent dependent;
   
   @Id
   @ManyToOne(fetch = FetchType.EAGER, optional = false)
   @JoinColumn(name = "guardianId")
   @JsonIgnore
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Guardian guardian;
   
   private List<DayOfWeek> daysOfWeek;

@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import imd.ufrn.familyroutine.model.Dependent;
+import imd.ufrn.familyroutine.model.api.request.DependentRequest;
+import imd.ufrn.familyroutine.model.api.response.DependentResponse;
 import imd.ufrn.familyroutine.service.DependentService;
 
 @CrossOrigin
@@ -23,19 +24,20 @@ public class DependentController {
     private DependentService dependentService;
 
     @GetMapping
-    public List<Dependent> getAllDependents() {
+    public List<DependentResponse> getAllDependents() {
         return this.dependentService.findAll();
     }
 
     @GetMapping("{dependentId}")
-    public Dependent findDependentById(@PathVariable Long dependentId) {
+    public DependentResponse findDependentById(@PathVariable Long dependentId) {
         return this.dependentService.findDependentById(dependentId);
     }
 
-    @PostMapping
-    public Dependent createDependent(@RequestBody Dependent newDependent) {
-        return this.dependentService.createDependent(newDependent);
-    }
+    // FIXME: dependent esta sendo criado atraves da guarda
+    // @PostMapping
+    // public DependentResponse createDependent(@RequestBody DependentRequest newDependent) {
+    //     return this.dependentService.createDependent(newDependent);
+    // }
 
     @DeleteMapping
     public void deleteAllDependents() {

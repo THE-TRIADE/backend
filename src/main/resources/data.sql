@@ -32,4 +32,10 @@ INSERT INTO dependent (`id`, familyGroupId) VALUES
     (5, 3),
     (6, 2);
 
--- INSERT INTO guard (daysOfWeek, guardianRole, guardianId, dependentId)
+INSERT INTO guardianInFamilyGroup(guardianId, familyGroupId) VALUES
+    (1, 2),
+    (3, 1),
+    (4, 3);
+
+-- INSERT INTO guard (daysOfWeek, guardianRole, guardianId, dependentId) VALUES
+--     ()

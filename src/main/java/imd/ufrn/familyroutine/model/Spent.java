@@ -2,6 +2,9 @@ package imd.ufrn.familyroutine.model;
 
 import java.sql.Date;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -33,16 +36,19 @@ public class Spent {
   @ManyToOne(fetch = FetchType.EAGER, optional = true)
   @JoinColumn(name = "activityId")
   @JsonIgnore
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Activity activity;
 
   @ManyToOne(fetch = FetchType.EAGER, optional = true)
   @JoinColumn(name = "dependentId")
   @JsonIgnore
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Dependent dependent;
 
   @ManyToOne(fetch = FetchType.EAGER, optional = true)
   @JoinColumn(name = "guardianId")
   @JsonIgnore
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Guardian guardian;
 
   public Spent(Long id, String name, Integer amount, Date paidOn, Activity activity, Dependent dependent,

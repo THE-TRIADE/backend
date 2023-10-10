@@ -2,7 +2,6 @@ package imd.ufrn.familyroutine.model.api.request;
 
 import java.util.List;
 
-import imd.ufrn.familyroutine.model.Dependent;
 import imd.ufrn.familyroutine.model.GuardianRole;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +14,7 @@ public class FamilyGroupRequest {
     @NotNull
     private Long guardianId;
     @NotNull
-    private List<Dependent> dependents;
+    private List<DependentRequest> dependents;
 
     public String getName() {
         return name;
@@ -36,10 +35,11 @@ public class FamilyGroupRequest {
     public void setGuardianId(Long guardianId) {
         this.guardianId = guardianId;
     }
-    public List<Dependent> getDependents() {
+    public List<DependentRequest> getDependents() {
         return dependents;
     }
-    public void setDependents(List<Dependent> dependents) {
+    public void setDependents(List<DependentRequest> dependents) {
         this.dependents = dependents;
     }
+
 }

@@ -147,7 +147,7 @@ public class ActivityService {
             newActivity.setDateEnd(Date.valueOf(currentDate.plusHours(diffInHours).toLocalDate()));
             newActivity.setHourStart(Time.valueOf(activityRequest.getHourStart()));
             newActivity.setHourEnd(Time.valueOf(activityRequest.getHourEnd()));
-            newActivity.setDependent(dependentService.findDependentById(activityRequest.getDependentId()));
+            newActivity.setDependent(dependentService.findDependentModelById(activityRequest.getDependentId()));
             newActivity.setCurrentGuardian(guardianService.findGuardianById(activityRequest.getCurrentGuardian()));
             newActivity.setActor(personService.findPersonById(activityRequest.getActor()));
             newActivity.setCreatedBy(guardianService.findGuardianById(activityRequest.getCreatedBy()));

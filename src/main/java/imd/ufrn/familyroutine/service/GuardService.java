@@ -12,7 +12,6 @@ import imd.ufrn.familyroutine.model.Guardian;
 import imd.ufrn.familyroutine.model.api.GuardMapper;
 import imd.ufrn.familyroutine.model.api.UtilsMapper;
 import imd.ufrn.familyroutine.model.api.request.GuardRequest;
-import imd.ufrn.familyroutine.model.api.response.FamilyGroupResponse;
 import imd.ufrn.familyroutine.model.api.response.GuardResponse;
 import imd.ufrn.familyroutine.repository.GuardRepository;
 import jakarta.transaction.Transactional;

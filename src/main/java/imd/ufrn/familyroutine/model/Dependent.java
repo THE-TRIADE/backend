@@ -39,5 +39,28 @@ public class Dependent extends Person {
   public void setFamilyGroup(FamilyGroup familyGroup) {
     this.familyGroup = familyGroup;
   }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((familyGroup == null) ? 0 : familyGroup.hashCode());
+    return result;
+  }
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (!super.equals(obj))
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Dependent other = (Dependent) obj;
+    if (familyGroup == null) {
+      if (other.familyGroup != null)
+        return false;
+    } else if (!familyGroup.equals(other.familyGroup))
+      return false;
+    return true;
+  }
 
 }

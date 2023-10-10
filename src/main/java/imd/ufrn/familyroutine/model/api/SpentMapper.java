@@ -28,7 +28,7 @@ public abstract class SpentMapper {
     if(spentRequest.getActivityId() != null) {
        activity = this.activityService.getActivityById(spentRequest.getActivityId());
     }
-    Dependent dependent = this.dependentService.findDependentById(spentRequest.getDependentId());
+    Dependent dependent = this.dependentService.findDependentModelById(spentRequest.getDependentId());
     Guardian guardian = this.guardianService.findGuardianById(spentRequest.getGuardianId());
     return this.mapSpentRequestToSpent(spentRequest, activity, dependent, guardian);
   }

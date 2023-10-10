@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,6 +39,7 @@ public class Guardian extends Person implements UserDetails {
             CascadeType.MERGE
         },
         mappedBy = "guardians")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Set<FamilyGroup> familyGroups = new HashSet<>();
 

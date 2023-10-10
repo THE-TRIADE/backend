@@ -27,7 +27,7 @@ public abstract class ActivityMapper {
         Guardian createdBy = this.guardianService.findGuardianById(activityRequest.getCreatedBy());
         Guardian currentGuardian = this.guardianService.findGuardianById(activityRequest.getCurrentGuardian());
         Person actor = this.personService.findPersonById(activityRequest.getActor());
-        Dependent dependent = this.dependentService.findDependentById(activityRequest.getDependentId());
+        Dependent dependent = this.dependentService.findDependentModelById(activityRequest.getDependentId());
         return this.mapActivityRequestToActivity(activityRequest, createdBy, currentGuardian, actor, dependent);
     }
 

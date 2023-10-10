@@ -11,8 +11,10 @@ import imd.ufrn.familyroutine.model.Dependent;
 import imd.ufrn.familyroutine.model.FamilyGroup;
 import imd.ufrn.familyroutine.model.Guard;
 import imd.ufrn.familyroutine.model.Guardian;
+import imd.ufrn.familyroutine.model.api.DependentMapper;
 import imd.ufrn.familyroutine.model.api.FamilyGroupMapper;
 import imd.ufrn.familyroutine.model.api.request.FamilyGroupRequest;
+import imd.ufrn.familyroutine.model.api.response.DependentResponse;
 import imd.ufrn.familyroutine.model.api.response.FamilyGroupResponse;
 import imd.ufrn.familyroutine.repository.FamilyGroupRepository;
 import imd.ufrn.familyroutine.service.exception.EntityNotFoundException;
@@ -27,6 +29,8 @@ public class FamilyGroupService{
     private GuardService guardService;
     @Autowired
     private FamilyGroupMapper familyGroupMapper;
+    @Autowired
+    private DependentMapper dependentMapper;
 
     public List<FamilyGroupResponse> findFamilyGroupsByGuardianId(Long guardianId) {
         return
@@ -51,24 +55,25 @@ public class FamilyGroupService{
 
     @Transactional
     public void deleteFamilyGroupById(Long familyGroupId) {
-        this.getFamilyGroupDependentsByFamilyGroupId(familyGroupId)
-            .forEach((familyGroup) -> {
-                dependentService.deleteDependentById(familyGroup.getId());
-            });
+        // FIXME: verificar se o jpa realiza automaticamente esta operacao
+        // this.getFamilyGroupDependentsByFamilyGroupId(familyGroupId)
+            // .forEach((familyGroup) -> {
+            //     dependentService.deleteDependentById(familyGroup.getId());
+            // });
         this.familyGroupRepository.deleteById(familyGroupId);
     }
     
     @Transactional
     public FamilyGroupResponse createFamilyGroupWithGuardianAndDependents(FamilyGroupRequest familyGroupRequest) {
-      //FIXME: verificar se o guardian eh criado automaticamente ou eh necessario ser explicito
         FamilyGroup familyGroup = this.familyGroupRepository.save(familyGroupMapper.mapFamilyGroupRequestToFamilyGroup(familyGroupRequest));
         
         Guardian guardian = familyGroup.getGuardians().iterator().next();
 
-        familyGroupRequest.getDependents().forEach(dependent -> {
-            dependent.setFamilyGroup(familyGroup);
-            dependent.setId(dependentService.createDependent(dependent).getId());
-           
+        familyGroupRequest.getDependents().forEach(dependentRequest -> {
+            DependentResponse dependentResponse = dependentService.createDependentWithFamilyGroup(dependentRequest, familyGroup);
+            Dependent dependent = dependentMapper.mapDependentRequestToDependent(dependentRequest, familyGroup);
+            dependent.setId(dependentResponse.getId());
+
             createNewGuard(familyGroupRequest, guardian, dependent);
         });
 
@@ -101,7 +106,9 @@ public class FamilyGroupService{
     }
 
     protected FamilyGroup addGuardianInFamilyGroup(Guardian guardian, Long familyGroupId) {
-        FamilyGroup familyGroup = this.familyGroupRepository.findById(familyGroupId).get();
+        FamilyGroup familyGroup = this.familyGroupRepository.findById(familyGroupId).orElseThrow(
+                () -> new EntityNotFoundException(familyGroupId, FamilyGroup.class)
+            );
         Set<Guardian> guardians = familyGroup.getGuardians();
         guardians.add(guardian);
         familyGroup.setGuardians(guardians);

@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import imd.ufrn.familyroutine.model.Dependent;
 import imd.ufrn.familyroutine.model.FamilyGroup;
+import imd.ufrn.familyroutine.model.api.DependentMapper;
+import imd.ufrn.familyroutine.model.api.request.DependentRequest;
+import imd.ufrn.familyroutine.model.api.response.DependentResponse;
 import imd.ufrn.familyroutine.repository.DependentRepository;
 import imd.ufrn.familyroutine.service.exception.EntityNotFoundException;
 
@@ -17,31 +20,51 @@ public class DependentService{
     @Autowired
     private DependentRepository dependentRepository;
     @Autowired
-    private PersonService personService;
+    private DependentMapper dependentMapper;
 
-    public List<Dependent> findAll() {
-        return this.dependentRepository.findAll();
+    public List<DependentResponse> findAll() {
+        return this.dependentRepository.findAll()
+        .stream()
+        .map(dependentMapper::mapDependentToDependentResponse)
+        .toList();
     }
 
-    public Dependent findDependentById(Long dependentId) {
-        return this.dependentRepository
-            .findById(dependentId)
-            .orElseThrow(() -> new EntityNotFoundException(dependentId, Dependent.class));
+    public DependentResponse findDependentById(Long dependentId) {
+        return 
+        this.dependentMapper
+            .mapDependentToDependentResponse(
+                this.dependentRepository
+                    .findById(dependentId)
+                    .orElseThrow(() -> new EntityNotFoundException(dependentId, Dependent.class)));
+    }
+
+    public Dependent findDependentModelById(Long dependentId) {
+        return 
+            this.dependentRepository
+                .findById(dependentId)
+                .orElseThrow(() -> new EntityNotFoundException(dependentId, Dependent.class));
     }
 
     @Transactional
     public void deleteAllDependents() {
-        List<Dependent> dependents = this.findAll();
-        this.personService.deleteAllDependents(dependents);
+        this.dependentRepository.deleteAll();
     }
 
     public void deleteDependentById(Long dependentId) {
-        this.personService.deletePersonById(dependentId);
+        this.dependentRepository.deleteById(dependentId);
     }
 
+    // FIXME: vide controller
+    // public DependentResponse createDependent(DependentRequest newDependent) {
+    //     Dependent dependent = this.dependentMapper.mapDependentRequestToDependent(newDependent, null)
+    //     return this.dependentRepository.save();
+    // }
 
-    public Dependent createDependent(Dependent newDependent) {
-        return this.dependentRepository.save(newDependent);
+    public DependentResponse createDependentWithFamilyGroup(DependentRequest newDependent, FamilyGroup familyGroup) {
+        Dependent dependent = this.dependentMapper.mapDependentRequestToDependent(newDependent, familyGroup);
+        return
+            this.dependentMapper.mapDependentToDependentResponse(  
+                this.dependentRepository.save(dependent));
     }
 
     public Optional<FamilyGroup> findFamilyGroupByDependentId(Long dependentId){
