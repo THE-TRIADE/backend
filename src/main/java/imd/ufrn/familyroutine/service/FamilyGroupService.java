@@ -98,8 +98,8 @@ public class FamilyGroupService{
 
     protected FamilyGroup findFamilyGroupByDependentId(Long dependentId) {
         return 
-        this.dependentService
-            .findFamilyGroupByDependentId(dependentId)
+        this.familyGroupRepository
+            .findFamilyGroupByDependentsId(dependentId)
             .orElseThrow(
                 () -> new EntityNotFoundException(dependentId, Dependent.class)
             );

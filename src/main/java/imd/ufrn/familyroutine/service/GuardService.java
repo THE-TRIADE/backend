@@ -58,16 +58,19 @@ public class GuardService {
     return this.guardMapper.mapGuardToGuardResponse(this.guardRepository.save(guard));
   }
 
+  @Transactional
   public GuardResponse createGuard(Guard newGuard) {
     this.validationService.validDaysOfWeekOrError(utilsMapper.listDayOfWeekToListInteger(newGuard.getDaysOfWeek()));
     
     return this.guardMapper.mapGuardToGuardResponse(this.guardRepository.save(newGuard));
   }
 
+  @Transactional
   public void deleteGuardsByGuardianIdAndDependentId(Long guardianId, Long dependentId) {
     this.guardRepository.deleteByGuardianIdAndDependentId(guardianId, dependentId);
   }
 
+  @Transactional
   public void deleteAllGuards() {
     this.guardRepository.deleteAll();
   }

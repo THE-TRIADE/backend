@@ -1,7 +1,6 @@
 package imd.ufrn.familyroutine.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,9 +66,9 @@ public class DependentService{
                 this.dependentRepository.save(dependent));
     }
 
-    public Optional<FamilyGroup> findFamilyGroupByDependentId(Long dependentId){
-        return this.dependentRepository.findFamilyGroupById(dependentId);
-    }
+    // public Optional<FamilyGroup> findFamilyGroupByDependentId(Long dependentId){
+    //     return this..findFamilyGroupById(dependentId);
+    // }
 
     public List<Dependent> findDependentsByFamilyGroupId(Long familyGroupId){
         return this.dependentRepository.findDependentsByFamilyGroupId(familyGroupId);

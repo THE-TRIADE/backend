@@ -6,6 +6,8 @@ import java.util.Set;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -38,6 +41,10 @@ public class FamilyGroup {
         inverseJoinColumns = {@JoinColumn(name = "guardianId")})
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Guardian> guardians = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "familyGroup")
+    private Set<Dependent> dependents = new HashSet<>();
 
     public FamilyGroup(Long id, String name, Set<Guardian> guardians) {
         this.id = id;
