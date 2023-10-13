@@ -40,7 +40,14 @@ spring:
     driverClassName: org.h2.Driver
     username: admin
     password: admin
-    
+# Swagger
+springdoc:
+  api-docs:
+    path: /swagger-doc/familyroutine/v3/api-docs/familyroutine
+  webjars:
+    prefix: /familyroutine
+  swagger-ui:
+    path: /swagger-doc/familyroutine
 
 server:
   port: 8080
