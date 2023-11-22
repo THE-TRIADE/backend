@@ -85,10 +85,15 @@ public class Activity {
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE)
     private GroupActivity groupActivity;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "categoryId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Category category;
     
     public Activity(Long id, String name, String description, Date dateStart, Date dateEnd, Time hourStart,
             Time hourEnd, ActivityState state, String commentary, Dependent dependent, Guardian currentGuardian,
-            Person actor, Guardian createdBy, Guardian finishedBy, GroupActivity groupActivity) {
+            Person actor, Guardian createdBy, Guardian finishedBy, GroupActivity groupActivity, Category category) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -104,6 +109,7 @@ public class Activity {
         this.createdBy = createdBy;
         this.finishedBy = finishedBy;
         this.groupActivity = groupActivity;
+        this.category = category;
     }
 
     public Activity() {
@@ -211,4 +217,13 @@ public class Activity {
     public void setFinishedBy(Guardian finishedBy) {
         this.finishedBy = finishedBy;
     }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+    
 }

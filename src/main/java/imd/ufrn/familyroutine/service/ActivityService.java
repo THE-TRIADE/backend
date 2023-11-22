@@ -62,6 +62,14 @@ public class ActivityService {
                     .toList();
     }
 
+    public List<ActivityResponse> findByCategoryId(Long categoryId) {
+        return this.activityRepository
+            .findByCategory_Id(categoryId)
+            .stream()
+            .map(this.activityMapper::mapActivityToActivityResponse)
+            .toList();
+    }
+
     public ActivityResponse findActivityById(Long activityId) {
         return this.activityMapper.mapActivityToActivityResponse(this.getActivityById(activityId));
     }
@@ -152,6 +160,7 @@ public class ActivityService {
             newActivity.setActor(personService.findPersonById(activityRequest.getActor()));
             newActivity.setCreatedBy(guardianService.findGuardianById(activityRequest.getCreatedBy()));
             newActivity.setState(activityRequest.getState());
+            newActivity.setCategory(activities.get(0).getCategory());
 
             activities.add(newActivity);
 

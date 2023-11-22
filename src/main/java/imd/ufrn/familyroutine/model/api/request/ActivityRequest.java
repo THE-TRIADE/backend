@@ -31,6 +31,7 @@ public class ActivityRequest {
     @NotNull
     private Boolean repeat;
     
+    private Long category;
     private List<Integer> daysToRepeat = new ArrayList<>();
     private LocalDate repeatUntil;
     
@@ -140,4 +141,12 @@ public class ActivityRequest {
     public void setRepeatUntil(LocalDate repeatUntil) {
         this.repeatUntil = repeatUntil;
     }
+
+    public Long getCategory() {
+        return category;
+    }
+    public void setCategory(Long category) {
+        this.category = category;
+    }
+    
 }

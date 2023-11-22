@@ -27,9 +27,12 @@ public class ActivityController {
     private ActivityService activityService;
     
     @GetMapping
-    public List<ActivityResponse> getAllActivities(@RequestParam Optional<Long> dependentId) {
+    public List<ActivityResponse> getAllActivities(@RequestParam Optional<Long> dependentId, @RequestParam Optional<Long> categoryId) {
         if(dependentId.isPresent()) {
             return this.activityService.findByDependentId(dependentId.get());
+        }
+        else if(categoryId.isPresent()) {
+            return this.activityService.findByCategoryId(categoryId.get());
         }
         return this.activityService.findAll();
     }

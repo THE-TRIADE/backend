@@ -32,6 +32,8 @@ public class ActivityResponse {
     private Long finishedById;
     private String finishedByName;
 
+    private Long categoryId;
+    private String categoryName;
     private Long groupActivityId;
 
     public ActivityResponse() {
@@ -204,4 +206,21 @@ public class ActivityResponse {
     public void setGroupActivityId(Long groupActivityId) {
         this.groupActivityId = groupActivityId;
     }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+    
 }
