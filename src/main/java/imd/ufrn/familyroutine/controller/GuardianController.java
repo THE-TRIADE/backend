@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import imd.ufrn.familyroutine.model.Guardian;
 import imd.ufrn.familyroutine.model.api.request.LoginRequest;
 import imd.ufrn.familyroutine.model.api.response.GuardianResponse;
+import imd.ufrn.familyroutine.model.api.response.GuardianTokenResponse;
 import imd.ufrn.familyroutine.service.GuardianService;
 import jakarta.validation.Valid;
 
@@ -39,7 +40,7 @@ public class GuardianController {
     }
 
     @PostMapping("/login")
-    public Guardian logInGuardian(@RequestBody @Valid LoginRequest loginRequest) {
+    public GuardianTokenResponse logInGuardian(@RequestBody @Valid LoginRequest loginRequest) {
         return this.guardianService.authenticateGuardian(loginRequest);
     }
 

@@ -19,7 +19,9 @@ import imd.ufrn.familyroutine.model.api.request.LoginRequest;
 import imd.ufrn.familyroutine.model.api.response.FamilyGroupResponse;
 import imd.ufrn.familyroutine.model.api.response.GuardResponse;
 import imd.ufrn.familyroutine.model.api.response.GuardianResponse;
+import imd.ufrn.familyroutine.model.api.response.GuardianTokenResponse;
 import imd.ufrn.familyroutine.repository.GuardianRepository;
+import imd.ufrn.familyroutine.security.JwtUtil;
 import imd.ufrn.familyroutine.service.exception.EmailAlreadyInUseException;
 import imd.ufrn.familyroutine.service.exception.EntityNotFoundException;
 
@@ -44,6 +46,9 @@ public class GuardianService {
 
     @Autowired
     private PersonService personService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     public List<Guardian> findAll() {
         return this.guardianRepository.findAll();
@@ -82,12 +87,16 @@ public class GuardianService {
         this.personService.deletePersonById(guardianId);
     }
 
-    public Guardian authenticateGuardian(LoginRequest loginRequest) {
+    public GuardianTokenResponse authenticateGuardian(LoginRequest loginRequest) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
         // FIXME: Expand EntityNotFoundException to accept string
-        return this.guardianRepository.findByEmail(loginRequest.getUsername()).orElseThrow(() -> new EntityNotFoundException(0L, Guardian.class));
+        Guardian guardianAuthenticated = this.guardianRepository
+            .findByEmail(loginRequest.getUsername())
+            .orElseThrow(() -> new EntityNotFoundException(0L, Guardian.class));
+        
+        return this.guardianMapper.mapGuardianToGuardianTokenResponse(guardianAuthenticated, jwtUtil.createToken(guardianAuthenticated));
     }
 
     @Transactional
