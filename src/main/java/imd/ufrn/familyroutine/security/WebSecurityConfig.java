@@ -59,6 +59,7 @@ public class WebSecurityConfig {
                 .requestMatchers(
                     new AntPathRequestMatcher("/**", "OPTIONS"),
                     new AntPathRequestMatcher("/guardian/login"), 
+                    new AntPathRequestMatcher("/guardian"), 
                     new AntPathRequestMatcher("/swagger-doc/**"), 
                     new AntPathRequestMatcher("/h2-ui/**")
                 ).permitAll()
