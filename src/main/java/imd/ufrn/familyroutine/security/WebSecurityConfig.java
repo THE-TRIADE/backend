@@ -56,9 +56,12 @@ public class WebSecurityConfig {
         return http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests()
-                .requestMatchers(new AntPathRequestMatcher("/**", "OPTIONS")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/guardian/login"), new AntPathRequestMatcher("/swagger-doc/**")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/h2-ui/**")).permitAll()
+                .requestMatchers(
+                    new AntPathRequestMatcher("/**", "OPTIONS"),
+                    new AntPathRequestMatcher("/guardian/login"), 
+                    new AntPathRequestMatcher("/swagger-doc/**"), 
+                    new AntPathRequestMatcher("/h2-ui/**")
+                ).permitAll()
                 .anyRequest().authenticated().and()
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
