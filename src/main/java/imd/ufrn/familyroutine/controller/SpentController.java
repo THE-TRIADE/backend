@@ -50,4 +50,9 @@ public class SpentController {
   public void deleteSpentById(@PathVariable Long spentId) {
     this.spentService.deleteSpentById(spentId);
   }
+
+  @PutMapping("/{spentId}")
+  public SpentResponse updateSpent(@PathVariable("spentId") Long spentId, @RequestBody SpentRequest updateSpent) {
+    return spentService.updateSpent(spentId, updateSpent);
+  }
 }

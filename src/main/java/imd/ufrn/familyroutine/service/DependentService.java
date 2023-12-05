@@ -74,4 +74,17 @@ public class DependentService{
         return this.dependentRepository.findDependentsByFamilyGroupId(familyGroupId);
     }
 
+    public DependentResponse updateDependent(Long dependentId, DependentRequest putdependent) {
+        if(!dependentRepository.existsById(dependentId)){
+            throw new EntityNotFoundException(dependentId, Dependent.class);
+        }
+        
+        Dependent oldDependent = this.dependentRepository
+                    .findById(dependentId)
+                    .orElseThrow(() -> new EntityNotFoundException(dependentId, Dependent.class));
+        Dependent dependent = this.dependentMapper.mapDependentRequestToDependent(putdependent, oldDependent.getFamilyGroup());
+        
+        dependent.setId(dependentId);
+        return this.dependentMapper.mapDependentToDependentResponse(this.dependentRepository.save(dependent));
+    }
 }

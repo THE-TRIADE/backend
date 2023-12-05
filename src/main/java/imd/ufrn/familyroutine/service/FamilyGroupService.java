@@ -96,6 +96,16 @@ public class FamilyGroupService{
         return this.familyGroupMapper.mapFamilyGroupToFamilyGroupResponse(this.findFamilyGroupByDependentId(dependentId));
     }
 
+    public FamilyGroupResponse updateFamilyGroup(Long familyGroupId, FamilyGroupRequest putFamilyGroup) {
+        if(!familyGroupRepository.existsById(familyGroupId)){
+            throw new EntityNotFoundException(familyGroupId, FamilyGroup.class);
+        }
+
+        FamilyGroup familyGroup = this.familyGroupMapper.mapFamilyGroupRequestToFamilyGroup(putFamilyGroup);
+        familyGroup.setId(familyGroupId);
+        return this.familyGroupMapper.mapFamilyGroupToFamilyGroupResponse(this.familyGroupRepository.save(familyGroup));
+    }
+
     protected FamilyGroup findFamilyGroupByDependentId(Long dependentId) {
         return 
         this.familyGroupRepository

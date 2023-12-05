@@ -7,11 +7,15 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import imd.ufrn.familyroutine.model.api.request.DependentRequest;
 import imd.ufrn.familyroutine.model.api.response.DependentResponse;
+import imd.ufrn.familyroutine.model.api.response.SpentResponse;
 import imd.ufrn.familyroutine.service.DependentService;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @CrossOrigin
 @RestController
@@ -45,4 +49,9 @@ public class DependentController {
     public void deleteDependentById(@PathVariable Long dependentId) {
         this.dependentService.deleteDependentById(dependentId);
     } 
+
+    @PutMapping("/{dependentId}")
+    public DependentResponse updateDependent(@PathVariable("dependentId") Long dependentId, @RequestBody DependentRequest updateDependent){
+        return dependentService.updateDependent(dependentId, updateDependent);
+    }
 }

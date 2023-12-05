@@ -14,12 +14,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import imd.ufrn.familyroutine.model.Guardian;
+import imd.ufrn.familyroutine.model.Spent;
 import imd.ufrn.familyroutine.model.api.GuardianMapper;
 import imd.ufrn.familyroutine.model.api.request.LoginRequest;
+import imd.ufrn.familyroutine.model.api.request.SpentRequest;
 import imd.ufrn.familyroutine.model.api.response.FamilyGroupResponse;
 import imd.ufrn.familyroutine.model.api.response.GuardResponse;
 import imd.ufrn.familyroutine.model.api.response.GuardianResponse;
 import imd.ufrn.familyroutine.model.api.response.GuardianTokenResponse;
+import imd.ufrn.familyroutine.model.api.response.SpentResponse;
 import imd.ufrn.familyroutine.repository.GuardianRepository;
 import imd.ufrn.familyroutine.security.JwtUtil;
 import imd.ufrn.familyroutine.service.exception.EmailAlreadyInUseException;
@@ -104,6 +107,23 @@ public class GuardianService {
         this.guardianValidOrError(newGuardian);
         newGuardian.setPassword(passwordEncoder.encode(newGuardian.getPassword()));
         return this.guardianRepository.save(newGuardian);
+    }
+
+    public GuardianResponse updateguardian(Long guardianId, Guardian putGuardian) {
+        if(!guardianRepository.existsById(guardianId)){
+            throw new EntityNotFoundException(guardianId, Guardian.class);
+        }
+
+        putGuardian.setId(guardianId);
+        List<GuardResponse> guards = this.guardService.findGuardsByGuardianId(guardianId);
+        Set<FamilyGroupResponse> familyGroups = new HashSet<>();
+        guards.stream()
+            .forEach(guard -> {
+                FamilyGroupResponse fg = this.familyGroupService.findByDependentId(guard.getDependentId());
+                familyGroups.add(fg);
+            });
+        
+        return this.guardianMapper.mapGuardianToGuardianResponse(this.guardianRepository.save(putGuardian), guards, familyGroups);
     }
 
     private void guardianValidOrError(Guardian guardian) {

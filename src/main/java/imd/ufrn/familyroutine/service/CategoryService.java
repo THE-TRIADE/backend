@@ -36,4 +36,13 @@ public class CategoryService {
     public void deleteCategoryById(Long categoryId) {
         this.categoryRepository.deleteById(categoryId);
     }
+
+    public Category updateCategory(Long categoryId, Category putCategory) {
+        if(!categoryRepository.existsById(categoryId)){
+            throw new EntityNotFoundException(categoryId, Category.class);
+        }
+
+        putCategory.setId(categoryId);
+        return this.categoryRepository.save(putCategory);
+    }
 }

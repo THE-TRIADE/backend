@@ -5,8 +5,9 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import imd.ufrn.familyroutine.model.Guard;
+import imd.ufrn.familyroutine.model.id.GuardId;
 
-public interface GuardRepository extends JpaRepository<Guard, Long> {
+public interface GuardRepository extends JpaRepository<Guard, GuardId> {
 
   List<Guard> findByGuardianId(Long id);
 
