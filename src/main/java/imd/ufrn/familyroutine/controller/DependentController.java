@@ -8,14 +8,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import imd.ufrn.familyroutine.model.api.request.DependentRequest;
 import imd.ufrn.familyroutine.model.api.response.DependentResponse;
-import imd.ufrn.familyroutine.model.api.response.SpentResponse;
 import imd.ufrn.familyroutine.service.DependentService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @CrossOrigin
 @RestController
@@ -32,6 +31,11 @@ public class DependentController {
     @GetMapping("{dependentId}")
     public DependentResponse findDependentById(@PathVariable Long dependentId) {
         return this.dependentService.findDependentById(dependentId);
+    }
+
+    @GetMapping("/by-cpf/{dependentCpf}")
+    public DependentResponse findDependentById(@PathVariable String dependentCpf) {
+        return this.dependentService.findDependentByCpf(dependentCpf);
     }
 
     // FIXME: dependent esta sendo criado atraves da guarda

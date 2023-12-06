@@ -1,5 +1,6 @@
 package imd.ufrn.familyroutine.service;
 
+import java.io.Console;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,15 @@ public class DependentService{
                 this.dependentRepository
                     .findById(dependentId)
                     .orElseThrow(() -> new EntityNotFoundException(dependentId, Dependent.class)));
+    }
+
+    public DependentResponse findDependentByCpf(String dependentCpf) {
+        return 
+        this.dependentMapper
+            .mapDependentToDependentResponse(
+                this.dependentRepository
+                    .findByCpf(dependentCpf)
+                    .orElseThrow(() -> new EntityNotFoundException(Long.parseLong(dependentCpf), Dependent.class)));
     }
 
     public Dependent findDependentModelById(Long dependentId) {
@@ -74,7 +84,8 @@ public class DependentService{
         return this.dependentRepository.findDependentsByFamilyGroupId(familyGroupId);
     }
 
-    public DependentResponse updateDependent(Long dependentId, DependentRequest putdependent) {
+    public DependentResponse updateDependent(Long dependentId, DependentRequest putDependent) {
+        System.out.println(putDependent);
         if(!dependentRepository.existsById(dependentId)){
             throw new EntityNotFoundException(dependentId, Dependent.class);
         }
@@ -82,8 +93,7 @@ public class DependentService{
         Dependent oldDependent = this.dependentRepository
                     .findById(dependentId)
                     .orElseThrow(() -> new EntityNotFoundException(dependentId, Dependent.class));
-        Dependent dependent = this.dependentMapper.mapDependentRequestToDependent(putdependent, oldDependent.getFamilyGroup());
-        
+        Dependent dependent = this.dependentMapper.mapDependentRequestToDependent(putDependent, oldDependent.getFamilyGroup());
         dependent.setId(dependentId);
         return this.dependentMapper.mapDependentToDependentResponse(this.dependentRepository.save(dependent));
     }

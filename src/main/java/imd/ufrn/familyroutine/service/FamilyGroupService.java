@@ -100,10 +100,31 @@ public class FamilyGroupService{
         if(!familyGroupRepository.existsById(familyGroupId)){
             throw new EntityNotFoundException(familyGroupId, FamilyGroup.class);
         }
-
+        Set<Guardian> guardians = familyGroupRepository.findById(familyGroupId).orElseThrow(
+                () -> new EntityNotFoundException(familyGroupId, FamilyGroup.class)
+            ).getGuardians();
+            
         FamilyGroup familyGroup = this.familyGroupMapper.mapFamilyGroupRequestToFamilyGroup(putFamilyGroup);
+        Guardian guardian = familyGroup.getGuardians().iterator().next();
+        familyGroup.setGuardians(guardians);
         familyGroup.setId(familyGroupId);
-        return this.familyGroupMapper.mapFamilyGroupToFamilyGroupResponse(this.familyGroupRepository.save(familyGroup));
+
+        putFamilyGroup.getDependents().forEach(dependentRequest -> {
+            try {
+                DependentResponse dependent = dependentService.findDependentByCpf(dependentRequest.getCpf());
+            } catch (EntityNotFoundException e) {
+                DependentResponse dependentResponse = dependentService.createDependentWithFamilyGroup(dependentRequest, familyGroup);
+                Dependent dependent = dependentMapper.mapDependentRequestToDependent(dependentRequest, familyGroup);
+                dependent.setId(dependentResponse.getId());
+
+                createNewGuard(putFamilyGroup, guardian, dependent);
+            }
+
+            // dependentService.updateDependent(dependent.getId(), dependentRequest);
+        });
+        
+        this.familyGroupRepository.save(familyGroup);
+        return this.findFamilyGroupById(familyGroupId);
     }
 
     protected FamilyGroup findFamilyGroupByDependentId(Long dependentId) {

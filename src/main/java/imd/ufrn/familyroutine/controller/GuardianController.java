@@ -58,7 +58,7 @@ public class GuardianController {
     } 
 
     @PutMapping("/{guardianId}")
-    public GuardianResponse updateguardian(@PathVariable("guardianId") Long guardianId, @RequestBody Guardian updateguardian) {
-        return guardianService.updateguardian(guardianId, updateguardian);
+    public GuardianResponse updateGuardian(@PathVariable("guardianId") Long guardianId, @RequestBody Guardian updateGuardian) {
+        return guardianService.updateguardian(guardianId, updateGuardian);
     }
 }

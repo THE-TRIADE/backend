@@ -14,6 +14,7 @@ import imd.ufrn.familyroutine.model.api.UtilsMapper;
 import imd.ufrn.familyroutine.model.api.request.GuardRequest;
 import imd.ufrn.familyroutine.model.api.response.GuardResponse;
 import imd.ufrn.familyroutine.repository.GuardRepository;
+import imd.ufrn.familyroutine.service.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -43,6 +44,15 @@ public class GuardService {
         .toList();
   }
 
+  public GuardResponse findGuardByGuardianIdAndDependentId(Long guardianId, Long dependentId) {
+    return 
+      this.guardMapper
+          .mapGuardToGuardResponse(
+              this.guardRepository
+                  .findByGuardianIdAndDependentId(guardianId, dependentId)
+                  .orElseThrow(() -> new EntityNotFoundException(0L, Guard.class)));
+    }
+
   @Transactional
   public GuardResponse createGuard(GuardRequest newGuard) {
     this.validationService.validDaysOfWeekOrError(newGuard.getDaysOfWeek());
@@ -61,7 +71,6 @@ public class GuardService {
   @Transactional
   public GuardResponse createGuard(Guard newGuard) {
     this.validationService.validDaysOfWeekOrError(utilsMapper.listDayOfWeekToListInteger(newGuard.getDaysOfWeek()));
-    
     return this.guardMapper.mapGuardToGuardResponse(this.guardRepository.save(newGuard));
   }
 
