@@ -45,8 +45,8 @@ public class FamilyGroupController {
         this.familyGroupService.deleteFamilyGroupById(familyGroupId);
     } 
     
-    @PutMapping("/{familyGroupId}")
-    public FamilyGroupResponse updatefamilyGroup(@PathVariable("familyGroupId") Long familyGroupId, @RequestBody FamilyGroupRequest updatefamilyGroup) {
+    @PutMapping("{familyGroupId}")
+    public FamilyGroupResponse updatefamilyGroup(@PathVariable Long familyGroupId, @RequestBody FamilyGroupRequest updatefamilyGroup) {
         return familyGroupService.updateFamilyGroup(familyGroupId, updatefamilyGroup);
     }
 }

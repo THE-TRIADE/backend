@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,13 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import imd.ufrn.familyroutine.model.api.request.ActivityRequest;
 import imd.ufrn.familyroutine.model.api.request.FinishActivityRequest;
-import imd.ufrn.familyroutine.model.api.request.ActivityRequest;
-import imd.ufrn.familyroutine.model.api.response.ActivityResponse;
 import imd.ufrn.familyroutine.model.api.response.ActivityResponse;
 import imd.ufrn.familyroutine.service.ActivityService;
 import jakarta.validation.Valid;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/activity")
 public class ActivityController {
     @Autowired
@@ -65,8 +65,8 @@ public class ActivityController {
         this.activityService.deleteActivityById(activityId);
     } 
     
-    @PutMapping("/{activityId}")
-    public ActivityResponse updateActivity(@PathVariable("activityId") Long activityId, @RequestBody ActivityRequest updateActivity) {
+    @PutMapping("{activityId}")
+    public ActivityResponse updateActivity(@PathVariable Long activityId, @RequestBody ActivityRequest updateActivity) {
         return activityService.updateActivity(activityId, updateActivity);
     }
 }

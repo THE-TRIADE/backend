@@ -112,6 +112,7 @@ public class FamilyGroupService{
         putFamilyGroup.getDependents().forEach(dependentRequest -> {
             try {
                 DependentResponse dependent = dependentService.findDependentByCpf(dependentRequest.getCpf());
+                dependentService.updateDependent(dependent.getId(), dependentRequest);
             } catch (EntityNotFoundException e) {
                 DependentResponse dependentResponse = dependentService.createDependentWithFamilyGroup(dependentRequest, familyGroup);
                 Dependent dependent = dependentMapper.mapDependentRequestToDependent(dependentRequest, familyGroup);
@@ -119,8 +120,6 @@ public class FamilyGroupService{
 
                 createNewGuard(putFamilyGroup, guardian, dependent);
             }
-
-            // dependentService.updateDependent(dependent.getId(), dependentRequest);
         });
         
         this.familyGroupRepository.save(familyGroup);

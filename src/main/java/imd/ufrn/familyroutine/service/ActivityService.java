@@ -221,12 +221,13 @@ public class ActivityService {
     }
 
     public ActivityResponse updateActivity(Long activityId, ActivityRequest putActivity) {
-        if(!activityRepository.existsById(activityId)){
-            throw new EntityNotFoundException(activityId, Activity.class);
-        }
+        Activity activity = this.getActivityById(activityId);
 
-        Activity activity = this.activityMapper.mapActivityRequestToActivity(putActivity);
-        activity.setId(activityId);
-        return this.activityMapper.mapActivityToActivityResponse(this.activityRepository.save(activity));
+        putActivity.setCreatedBy(activity.getCreatedBy().getId());
+        putActivity.setRepeat(false);
+
+        Activity activityUpdated = this.activityMapper.mapActivityRequestToActivity(putActivity);
+        activityUpdated.setId(activityId);
+        return this.activityMapper.mapActivityToActivityResponse(this.activityRepository.save(activityUpdated));
     }
 }
