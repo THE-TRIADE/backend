@@ -42,8 +42,14 @@ public class SpentService {
     return this.spentMapper.mapSpentToSpentResponse(this.spentRepository.save(spent));
   }
 
-  public Spent updateSpent(Spent spent) {
-    return this.spentRepository.save(spent);
+  public SpentResponse updateSpent(Long spentId, SpentRequest putSpent) {
+    if(!spentRepository.existsById(spentId)){
+      throw new EntityNotFoundException(spentId, Spent.class);
+    }
+
+    Spent spent = this.spentMapper.mapSpentRequestToSpent(putSpent);
+    spent.setId(spentId);
+    return this.spentMapper.mapSpentToSpentResponse(this.spentRepository.save(spent));
   }
 
   public void deleteSpentById(Long spentId) {

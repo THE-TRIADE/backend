@@ -35,6 +35,11 @@ public class GuardController {
     return this.guardService.findGuardsByGuardianId(guardianId);
   }
 
+  @GetMapping("/by-guardian-id-and-dependent-id/{guardianId}/{dependentId}")
+  public GuardResponse findGuardByGuardianIdAndDependentId(@PathVariable Long guardianId, @PathVariable Long dependentId) {
+    return this.guardService.findGuardByGuardianIdAndDependentId(guardianId, dependentId);
+  }
+
   @PostMapping
   public GuardResponse createGuard(@RequestBody GuardRequest newGuard) {
     return this.guardService.createGuard(newGuard);

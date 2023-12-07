@@ -7,14 +7,17 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import imd.ufrn.familyroutine.model.Guardian;
 import imd.ufrn.familyroutine.model.api.request.LoginRequest;
+import imd.ufrn.familyroutine.model.api.request.SpentRequest;
 import imd.ufrn.familyroutine.model.api.response.GuardianResponse;
 import imd.ufrn.familyroutine.model.api.response.GuardianTokenResponse;
+import imd.ufrn.familyroutine.model.api.response.SpentResponse;
 import imd.ufrn.familyroutine.service.GuardianService;
 import jakarta.validation.Valid;
 
@@ -53,4 +56,9 @@ public class GuardianController {
     public void deleteGuardianById(@PathVariable Long guardianId) {
         this.guardianService.deleteGuardianById(guardianId);
     } 
+
+    @PutMapping("/{guardianId}")
+    public GuardianResponse updateGuardian(@PathVariable("guardianId") Long guardianId, @RequestBody Guardian updateGuardian) {
+        return guardianService.updateguardian(guardianId, updateGuardian);
+    }
 }

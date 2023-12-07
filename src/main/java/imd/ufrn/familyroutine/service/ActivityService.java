@@ -18,9 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 import imd.ufrn.familyroutine.model.Activity;
 import imd.ufrn.familyroutine.model.ActivityState;
 import imd.ufrn.familyroutine.model.GroupActivity;
+import imd.ufrn.familyroutine.model.Activity;
 import imd.ufrn.familyroutine.model.api.ActivityMapper;
 import imd.ufrn.familyroutine.model.api.request.ActivityRequest;
 import imd.ufrn.familyroutine.model.api.request.FinishActivityRequest;
+import imd.ufrn.familyroutine.model.api.request.ActivityRequest;
+import imd.ufrn.familyroutine.model.api.response.ActivityResponse;
 import imd.ufrn.familyroutine.model.api.response.ActivityResponse;
 import imd.ufrn.familyroutine.repository.ActivityRepository;
 import imd.ufrn.familyroutine.service.exception.EntityNotFoundException;
@@ -215,5 +218,15 @@ public class ActivityService {
         if (daysLesserThan1 > 0 || daysGreaterThan7 > 0) {
             throw new GroupActivityException(GroupActivityType.DAY_INDEX);
         }
+    }
+
+    public ActivityResponse updateActivity(Long activityId, ActivityRequest putActivity) {
+        if(!activityRepository.existsById(activityId)){
+            throw new EntityNotFoundException(activityId, Activity.class);
+        }
+
+        Activity activity = this.activityMapper.mapActivityRequestToActivity(putActivity);
+        activity.setId(activityId);
+        return this.activityMapper.mapActivityToActivityResponse(this.activityRepository.save(activity));
     }
 }
