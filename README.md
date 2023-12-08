@@ -68,6 +68,6 @@ Após terminar de buildar o projeto, note que vai ser gerado um JAR na pasta `ta
 java -jar target/familyroutine-0.0.1-SNAPSHOT.jar
 ```
 
-### IDE
+#### IDE
 Clonar o projeto escolhendo a branch develop, rodar aplicação via VSCode clicando em "Run" no arquivo `FamilyRoutineApplication.java` e ou apertando F5.
 
